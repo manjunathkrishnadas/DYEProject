@@ -1,0 +1,274 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Time LiveOps - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Fredoka:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .liveops-body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top left, #ffe4f0 0, transparent 50%),
+                        radial-gradient(circle at bottom right, #e0f4ff 0, transparent 50%),
+                        #fdf5ff;
+            font-family: 'Baloo 2', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            position: relative;
+        }
+
+        .liveops-body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: url('8C569E66-41D9-48BE-BF89-1D90B8F220A8_4_5005_c.jpeg') repeat center center;
+            background-size: 140px auto;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .liveops-auth-card {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+            padding: 32px 28px 28px;
+            width: 380px;
+            max-width: 92vw;
+            border: 2px solid #ffd0f0;
+            position: relative;
+            z-index: 1;
+        }
+        .liveops-auth-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #ffffff;
+            border-radius: 18px;
+            z-index: -1;
+        }
+        .liveops-auth-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .liveops-auth-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: radial-gradient(circle at 30% 20%, #fff 0, #ffd6f5 45%, #ff9ed1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .liveops-auth-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        .liveops-auth-title {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .liveops-auth-title h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            color: #0066cc;
+            font-weight: 700;
+            font-style: normal;
+            line-height: 1.1;
+            text-align: left;
+        }
+        .liveops-auth-title span {
+            font-size: 1.15rem;
+            color: #0088ff;
+            font-weight: 500;
+            font-style: normal;
+            line-height: 1.2;
+            text-align: left;
+        }
+        .liveops-auth-form {
+            margin-top: 8px;
+        }
+        .liveops-field {
+            margin-bottom: 14px;
+        }
+        .liveops-label {
+            display: block;
+            font-size: 0.78rem;
+            margin-bottom: 4px;
+            color: #5a355f;
+        }
+        .liveops-input {
+            width: 100%;
+            border-radius: 999px;
+            border: 1.5px solid #e4c7ff;
+            padding: 9px 13px;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+            font-family: inherit;
+        }
+        .liveops-input:focus {
+            border-color: #ff6bb0;
+            box-shadow: 0 0 0 2px rgba(255,107,176,0.25);
+        }
+        .liveops-actions {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .liveops-btn-primary {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff6bb0, #ff8f6b);
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255,107,176,0.35);
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .liveops-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(255,107,176,0.4);
+        }
+        .liveops-btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 8px 18px rgba(255,107,176,0.3);
+        }
+        .liveops-hint {
+            font-size: 0.72rem;
+            color: #8b6f9c;
+            text-align: center;
+        }
+        .liveops-error {
+            min-height: 16px;
+            margin-top: 4px;
+            font-size: 0.72rem;
+            color: #b02043;
+            text-align: center;
+        }
+        @media (max-width: 480px) {
+            .liveops-auth-card {
+                padding: 24px 18px 20px;
+            }
+        }
+        .liveops-login-overlay {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .liveops-login-overlay.active {
+            display: flex;
+        }
+        .liveops-login-video {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,102,204,0.4);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('liveopsLoginForm');
+            const userInput = document.getElementById('liveopsUsername');
+            const passInput = document.getElementById('liveopsPassword');
+            const errorBox = document.getElementById('liveopsError');
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const username = userInput.value.trim();
+                const password = passInput.value.trim();
+
+                if (!username || !password) {
+                    errorBox.textContent = 'Please enter both username and password.';
+                    return;
+                }
+
+                if (username !== 'DYE' || password !== 'DYE') {
+                    errorBox.textContent = 'Invalid credentials. Use username: DYE and password: DYE';
+                    return;
+                }
+
+                errorBox.textContent = '';
+                
+                // Show mascot video overlay
+                const overlay = document.getElementById('liveopsLoginOverlay');
+                const video = document.getElementById('liveopsLoginVideo');
+                
+                if (overlay && video) {
+                    overlay.classList.add('active');
+                    video.play();
+                    
+                    // Redirect to dashboard after video ends or after 5 seconds (whichever comes first)
+                    const redirectUrl = 'liveops-dashboard.html?user=' + encodeURIComponent(username);
+                    
+                    const redirectTimeout = setTimeout(function() {
+                        window.location.href = redirectUrl;
+                    }, 5000);
+                    
+                    video.addEventListener('ended', function() {
+                        clearTimeout(redirectTimeout);
+                        window.location.href = redirectUrl;
+                    });
+                } else {
+                    // Fallback if video elements not found
+                    window.location.href = 'liveops-dashboard.html?user=' + encodeURIComponent(username);
+                }
+            });
+        });
+    </script>
+</head>
+<body class="liveops-body">
+    <div class="liveops-auth-card">
+        <div class="liveops-auth-header">
+            <div class="liveops-auth-logo">
+                <img src="8C569E66-41D9-48BE-BF89-1D90B8F220A8_4_5005_c.jpeg" alt="Scopely Logo">
+            </div>
+            <div class="liveops-auth-title">
+                <h1>Real Time LiveOps</h1>
+                <span>Scopely Operational Dashboard</span>
+            </div>
+        </div>
+
+        <form id="liveopsLoginForm" class="liveops-auth-form">
+            <div class="liveops-field">
+                <label class="liveops-label" for="liveopsUsername">Username</label>
+                <input class="liveops-input" id="liveopsUsername" type="text" autocomplete="username" required>
+            </div>
+            <div class="liveops-field">
+                <label class="liveops-label" for="liveopsPassword">Password</label>
+                <input class="liveops-input" id="liveopsPassword" type="password" autocomplete="current-password" required>
+            </div>
+            <div class="liveops-actions">
+                <button type="submit" class="liveops-btn-primary">Enter Dashboard</button>
+                <div class="liveops-hint">Demo login – any non-empty username and password will work.</div>
+            </div>
+            <div id="liveopsError" class="liveops-error" aria-live="polite"></div>
+        </form>
+    </div>
+    <div id="liveopsLoginOverlay" class="liveops-login-overlay">
+        <video id="liveopsLoginVideo" class="liveops-login-video" muted playsinline>
+            <source src="asset_ztm2dZzJ1Kjdi3An1JL5CnRc.mp4" type="video/mp4">
+        </video>
+    </div>
+</body>
+</html>

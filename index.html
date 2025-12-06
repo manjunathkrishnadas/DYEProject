@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Fredoka:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Sticker Book</h1>
+    </header>
+
+    <main>
+        <section class="controls">
+            <label for="imageInput">Image URLs (JSON Array):</label>
+            <textarea id="imageInput" rows="4" placeholder='["https://example.com/image1.png", "https://example.com/image2.png"]'></textarea>
+            
+            <div class="button-group">
+                <button id="renderBtn">Render</button>
+                <button id="shuffleBtn">Shuffle</button>
+                <button id="clearBtn">Clear</button>
+                <button id="sampleBtn">Use Sample</button>
+            </div>
+
+            <div id="status" class="status" aria-live="polite"></div>
+        </section>
+
+        <section class="book">
+            <div class="page left"></div>
+            <div class="spine"></div>
+            <div class="page right"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Manju. All rights reserved.</p>
+    </footer>
+</body>
+</html>

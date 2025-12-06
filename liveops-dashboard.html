@@ -1,0 +1,2742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Time LiveOps - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Fredoka:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .liveops-dashboard-body {
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at top left, #ffe4f0 0, transparent 55%),
+                        radial-gradient(circle at bottom right, #e0f4ff 0, transparent 55%),
+                        #fdf5ff;
+            font-family: 'Baloo 2', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #2b123f;
+            position: relative;
+        }
+
+        .liveops-dashboard-body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: url('8C569E66-41D9-48BE-BF89-1D90B8F220A8_4_5005_c.jpeg') repeat center center;
+            background-size: 140px auto;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .liveops-shell {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 18px 16px 32px;
+        }
+        .liveops-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .liveops-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .liveops-logo-pill {
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            background: radial-gradient(circle at 30% 15%, #fff 0, #ffd6f5 35%, #ff9ed1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 10px 22px rgba(255,107,176,0.5);
+        }
+        .liveops-logo-pill img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .liveops-title-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .liveops-title-block h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            color: #0066cc;
+            font-weight: 700;
+            font-style: normal;
+            line-height: 1.1;
+            text-align: left;
+        }
+        .liveops-title-block span {
+            font-size: 1.3rem;
+            color: #0088ff;
+            font-weight: 500;
+            font-style: normal;
+            line-height: 1.2;
+            text-align: left;
+        }
+        .liveops-user-pill {
+            font-size: 0.78rem;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #e6d2ff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .liveops-user-badge {
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff8f6b, #ffda6b);
+            color: #2b123f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .liveops-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.45fr);
+            gap: 16px;
+        }
+        .liveops-panel {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 14px 14px 16px;
+            box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+            border: 1.5px solid #f2dcff;
+        }
+        .liveops-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .liveops-panel-title {
+            font-size: 0.92rem;
+        }
+        .liveops-chip {
+            font-size: 0.68rem;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: #fff7e0;
+            color: #8a5a00;
+            border: 1px solid #ffe29a;
+        }
+        .liveops-ideas-panel {
+            margin-bottom: 6px;
+        }
+        .liveops-ideas-textarea {
+            width: 100%;
+            min-height: 70px;
+            resize: vertical;
+            border-radius: 10px;
+            border: 1px solid #e4c7ff;
+            padding: 8px 9px;
+            font-size: 0.78rem;
+            font-family: inherit;
+        }
+        .liveops-ideas-actions {
+            margin-top: 6px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .liveops-ideas-btn {
+            border-radius: 999px;
+            border: none;
+            padding: 6px 11px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4caf50, #88e27a);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.35);
+        }
+        .liveops-cta-preview-grid {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .liveops-cta-sample {
+            border-radius: 12px;
+            padding: 8px 9px;
+            background: linear-gradient(135deg, #fdf2ff, #e4f3ff);
+            border: 1px solid #e4c7ff;
+            font-size: 0.72rem;
+            cursor: pointer;
+        }
+        .liveops-cta-sample-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .liveops-cta-sample[data-selected="true"] {
+            border-color: #4caf50;
+            box-shadow: 0 0 0 1px #4caf50;
+        }
+        .liveops-stat-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .liveops-stat {
+            flex: 1;
+            padding: 8px 9px;
+            border-radius: 14px;
+            background: #ffffff;
+            border: 1px dashed #e1c6ff;
+            font-size: 0.75rem;
+        }
+        .liveops-stat strong {
+            display: block;
+            font-size: 0.82rem;
+            margin-bottom: 2px;
+        }
+        .liveops-toggle-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .liveops-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #e4c7ff;
+        }
+        .liveops-switch {
+            width: 38px;
+            height: 20px;
+            border-radius: 999px;
+            background: #e0c9ff;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.18s ease;
+        }
+        .liveops-switch-handle {
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translateX(0);
+            transition: transform 0.18s ease;
+        }
+        .liveops-switch[data-on="true"] {
+            background: #ff8f6b;
+        }
+        .liveops-switch[data-on="true"] .liveops-switch-handle {
+            transform: translateX(16px);
+        }
+        .liveops-segments-list {
+            margin: 4px 0 0;
+            padding-left: 16px;
+            font-size: 0.76rem;
+            color: #5a355f;
+        }
+        .liveops-footer-row {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            color: #7a5a99;
+        }
+        .liveops-notify-row {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 0.78rem;
+        }
+        .liveops-notify-input {
+            flex: 1;
+            padding: 6px 8px;
+            border-radius: 10px;
+            border: 1px solid #e4c7ff;
+            font-size: 0.78rem;
+            font-family: inherit;
+        }
+        .liveops-notify-btn {
+            border-radius: 999px;
+            border: none;
+            padding: 6px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4caf50, #88e27a);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(76, 175, 80, 0.35);
+        }
+        .liveops-cta-btn {
+            border-radius: 999px;
+            border: none;
+            padding: 7px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ff6bb0, #ff8f6b);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255,107,176,0.4);
+        }
+        .liveops-meta {
+            font-size: 0.7rem;
+            color: #9b80b3;
+            margin-top: 8px;
+        }
+        .liveops-schedule-panel {
+            margin-top: 16px;
+            padding: 12px 14px 14px;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+            border: 1px solid #e4c7ff;
+            position: relative;
+            overflow: hidden;
+        }
+        .liveops-schedule-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #ffffff;
+            z-index: -1;
+        }
+        .liveops-schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .liveops-schedule-field {
+            font-size: 0.78rem;
+            color: #5a355f;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+        .liveops-env-toggle {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .liveops-env-chip {
+            padding: 4px 9px;
+            border-radius: 999px;
+            border: 1px solid #e4c7ff;
+            font-size: 0.76rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #faf5ff;
+        }
+        .liveops-schedule-btn {
+            margin-top: 8px;
+            border-radius: 999px;
+            border: none;
+            padding: 7px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4caf50, #88e27a);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.35);
+        }
+        .liveops-launches-panel {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 14px 14px 16px;
+            box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+            border: 1.5px solid #f2dcff;
+            position: relative;
+            overflow: hidden;
+        }
+        .liveops-launches-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #ffffff;
+            z-index: -1;
+        }
+        .liveops-launches-list {
+            margin-top: 6px;
+            font-size: 0.78rem;
+            color: #5a355f;
+        }
+        .liveops-launch-row {
+            display: grid;
+            grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.4fr) minmax(0, 1.6fr);
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #e4c7ff;
+            margin-bottom: 5px;
+        }
+        .liveops-launch-title {
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .liveops-launch-sub {
+            font-size: 0.72rem;
+            color: #7a5a99;
+        }
+        .liveops-launch-status {
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        .liveops-launch-status[data-status="ready"] {
+            background: #e0f7e9;
+            color: #1b7a3a;
+        }
+        .liveops-launch-status[data-status="in-progress"] {
+            background: #fff4e0;
+            color: #a06400;
+        }
+        .liveops-launch-status[data-status="completed"] {
+            background: #ece9ff;
+            color: #5640a6;
+        }
+        .liveops-launch-status[data-status="paused"] {
+            background: #e0f0ff;
+            color: #1f4a8a;
+        }
+        .liveops-launch-status[data-status="stopped"] {
+            background: #ffe4e4;
+            color: #a02020;
+        }
+        .liveops-launch-actions {
+            margin-top: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .liveops-btn-pause {
+            border-radius: 999px;
+            border: none;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            background: #e0f0ff;
+            color: #1f4a8a;
+            cursor: pointer;
+        }
+        .liveops-btn-relaunch {
+            border-radius: 999px;
+            border: none;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            background: #e5ffe5;
+            color: #227022;
+            cursor: pointer;
+        }
+        .liveops-btn-stop {
+            border-radius: 999px;
+            border: none;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            background: #ffe0e0;
+            color: #a02020;
+            cursor: pointer;
+        }
+        .liveops-btn-edit {
+            border-radius: 999px;
+            border: none;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            background: #faf5ff;
+            color: #5a355f;
+            cursor: pointer;
+        }
+        .liveops-launch-sort {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .liveops-launch-sort select {
+            font-size: 0.75rem;
+            padding: 3px 6px;
+            border-radius: 999px;
+            border: 1px solid #e4c7ff;
+            background: #faf5ff;
+        }
+        .liveops-launch-header-row {
+            display: grid;
+            grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.4fr) minmax(0, 1.6fr);
+            gap: 6px;
+            padding: 4px 8px 6px;
+            font-size: 0.74rem;
+            color: #7a5a99;
+            font-weight: 600;
+        }
+        .liveops-launch-header-row span {
+            white-space: nowrap;
+        }
+        .liveops-golive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .liveops-panel-golive {
+            grid-column: 1 / -1;
+        }
+        .liveops-golive-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr);
+            gap: 12px;
+            align-items: flex-start;
+            margin-top: 6px;
+        }
+        @media (max-width: 900px) {
+            .liveops-panel-golive {
+                grid-column: auto;
+            }
+            .liveops-golive-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        .liveops-golive-cta {
+            border-radius: 999px;
+            border: none;
+            padding: 7px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4caf50, #88e27a);
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.35);
+        }
+        .liveops-golive-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .liveops-golive-tab {
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 0.76rem;
+            border: 1px solid #e4c7ff;
+            background: #faf5ff;
+            color: #5a355f;
+            cursor: pointer;
+        }
+        .liveops-golive-tab[data-active="true"] {
+            background: linear-gradient(135deg, #ff6bb0, #ff8f6b);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 6px 14px rgba(255, 107, 176, 0.35);
+        }
+        .liveops-golive-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 4px 0 0;
+            font-size: 0.78rem;
+            color: #5a355f;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 4px 8px;
+        }
+        .liveops-golive-list li {
+            padding: 4px 7px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px dashed #e1c6ff;
+            cursor: pointer;
+        }
+        .liveops-golive-list li[data-selected="true"] {
+            background: linear-gradient(135deg, #ff6bb0, #ff8f6b);
+            color: #ffffff;
+            border-style: solid;
+        }
+        .liveops-golive-config {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed #e4c7ff;
+            display: none; /* shown after user picks a specific option */
+        }
+        .liveops-golive-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .liveops-golive-field {
+            flex: 1 1 220px;
+            font-size: 0.78rem;
+            color: #5a355f;
+        }
+        .liveops-golive-subblock {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 6px 8px;
+            border: 1px solid #e4c7ff;
+        }
+        .liveops-checkbox-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
+            margin-bottom: 3px;
+        }
+        .liveops-golive-checkbox-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+            margin-top: 4px;
+        }
+        .liveops-back-link {
+            font-size: 0.72rem;
+            color: #6b4a86;
+            text-decoration: none;
+        }
+        .liveops-back-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 900px) {
+            .liveops-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        .liveops-ai-bot {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+        .liveops-ai-chat {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            width: 380px;
+            max-width: calc(100vw - 60px);
+            height: 500px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideInUp 0.3s ease;
+            border: 2px solid #0066cc;
+        }
+        .liveops-ai-chat.active {
+            display: flex;
+        }
+        .liveops-ai-header {
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 18px 18px 0 0;
+        }
+        .liveops-ai-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .liveops-ai-info {
+            flex: 1;
+        }
+        .liveops-ai-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .liveops-ai-info p {
+            margin: 2px 0 0;
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        .liveops-ai-close {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .liveops-ai-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .liveops-ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8f9fa;
+        }
+        .liveops-ai-message {
+            display: flex;
+            gap: 8px;
+            animation: messageSlideIn 0.3s ease;
+        }
+        .liveops-ai-message.user {
+            flex-direction: row-reverse;
+        }
+        .liveops-ai-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .liveops-ai-message.user .liveops-ai-message-avatar {
+            background: linear-gradient(135deg, #6b4a86, #8e6aaa);
+        }
+        .liveops-ai-message-bubble {
+            background: white;
+            border-radius: 16px;
+            padding: 10px 14px;
+            max-width: 70%;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .liveops-ai-message.user .liveops-ai-message-bubble {
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            color: white;
+        }
+        .liveops-ai-typing {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 16px;
+            width: fit-content;
+        }
+        .liveops-ai-typing.active {
+            display: flex;
+        }
+        .liveops-ai-typing span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0066cc;
+            animation: typingDot 1.4s infinite;
+        }
+        .liveops-ai-typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .liveops-ai-typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        .liveops-ai-input-area {
+            padding: 12px 16px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .liveops-ai-input {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .liveops-ai-input:focus {
+            border-color: #0066cc;
+        }
+        .liveops-ai-action-btn {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .liveops-ai-action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,102,204,0.4);
+        }
+        .liveops-ai-action-btn.listening {
+            background: linear-gradient(135deg, #ff0066, #ff3388);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .liveops-ai-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            border: none;
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .liveops-ai-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,102,204,0.5);
+        }
+        .liveops-ai-toggle .liveops-ai-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            background: #ff0066;
+            border-radius: 50%;
+            color: white;
+            font-size: 0.7rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+        .liveops-ai-toggle .liveops-ai-badge.active {
+            display: flex;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 8px 30px rgba(0,102,204,0.6);
+            }
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+    <script>
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name) || '';
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const username = getQueryParam('user');
+            const userSpan = document.getElementById('liveopsUserName');
+            const badge = document.getElementById('liveopsUserInitial');
+
+            if (username) {
+                userSpan.textContent = username;
+                badge.textContent = username.charAt(0).toUpperCase();
+            } else {
+                userSpan.textContent = 'Guest';
+                badge.textContent = 'G';
+            }
+
+            function loadToggleStates() {
+                try {
+                    const raw = localStorage.getItem('liveopsToggles');
+                    if (!raw) return {};
+                    const parsed = JSON.parse(raw);
+                    return parsed && typeof parsed === 'object' ? parsed : {};
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            function saveToggleStates(states) {
+                try {
+                    localStorage.setItem('liveopsToggles', JSON.stringify(states));
+                } catch (e) {
+                    // ignore in prototype
+                }
+            }
+
+            function updateEventTimestamp(key, ts) {
+                const el = document.getElementById('eventTime-' + key);
+                if (el) {
+                    el.textContent = ts || '—';
+                }
+            }
+
+            function nowTimestamp() {
+                try {
+                    return new Date().toLocaleString();
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            const toggleStates = loadToggleStates();
+
+            document.querySelectorAll('.liveops-switch').forEach(function (sw) {
+                const key = sw.getAttribute('data-key') || '';
+                const isEventsToggleKey = (key === 'happyHourDeal' || key === 'albumGoldenDeal' || key === 'roomBundleSale');
+
+                if (key && Object.prototype.hasOwnProperty.call(toggleStates, key)) {
+                    const stored = toggleStates[key];
+                    let isOn = false;
+                    let activatedAt = '';
+                    if (stored && typeof stored === 'object') {
+                        isOn = !!stored.on;
+                        activatedAt = stored.activatedAt || '';
+                    } else if (typeof stored === 'boolean') {
+                        isOn = stored;
+                    }
+                    sw.setAttribute('data-on', String(isOn));
+                    if (activatedAt) {
+                        updateEventTimestamp(key, activatedAt);
+                    }
+                    const container = sw.closest('.liveops-toggle');
+                    if (container && isEventsToggleKey && isOn) {
+                        container.setAttribute('data-active', 'true');
+                    }
+                } else if (key) {
+                    // default: off
+                    sw.setAttribute('data-on', 'false');
+                }
+
+                sw.addEventListener('click', function () {
+                    const current = this.getAttribute('data-on') === 'true';
+                    const next = !current;
+
+                    const k = this.getAttribute('data-key') || '';
+                    const isEventsToggle = (k === 'happyHourDeal' || k === 'albumGoldenDeal' || k === 'roomBundleSale');
+
+                    const container = this.closest('.liveops-toggle');
+
+                    if (!current && next && isEventsToggle) {
+                        const labelEl = container?.querySelector('span');
+                        const label = labelEl ? labelEl.textContent.trim() : k;
+                        const confirmed = window.confirm('This will go live for all players immediately. Activate "' + label + '"?');
+                        if (!confirmed) {
+                            return; // do not change state
+                        }
+                    }
+
+                    this.setAttribute('data-on', String(next));
+                    if (container && isEventsToggle) {
+                        if (next) {
+                            container.setAttribute('data-active', 'true');
+                        } else {
+                            container.removeAttribute('data-active');
+                        }
+                    }
+
+                    if (k) {
+                        const prev = toggleStates[k];
+                        let activatedAt = '';
+                        if (next) {
+                            activatedAt = nowTimestamp();
+                        } else if (prev && typeof prev === 'object' && prev.activatedAt) {
+                            activatedAt = prev.activatedAt;
+                        }
+
+                        toggleStates[k] = { on: next, activatedAt: activatedAt };
+                        saveToggleStates(toggleStates);
+                        updateEventTimestamp(k, activatedAt);
+
+                        if (next && isEventsToggle) {
+                            const labelEl2 = container?.querySelector('span');
+                            const label2 = labelEl2 ? labelEl2.textContent.trim() : k;
+                            syncEventsToggleToLaunch(k, label2, activatedAt, true);
+                        }
+                    }
+                });
+            });
+
+            function updateCreateNewPanelVisibility() {
+                const themeSelect = document.getElementById('liveopsTheme');
+                const panel = document.getElementById('liveopsCreateNewPanel');
+                if (!themeSelect || !panel) return;
+                const value = themeSelect.value;
+                panel.style.display = (value === 'create-new') ? 'block' : 'none';
+            }
+
+            let generatedCtas = [];
+
+            const goLiveData = {
+                Sales: [
+                    '3PO',
+                    '6PO',
+                    'BOGO',
+                    'Buy ALL',
+                    'Rolling Offer 4PO',
+                    'Rolling Offer 3PO',
+                    'Endless Sale',
+                    'Others'
+                ],
+                Events: [
+                    'Magic Carpet',
+                    'Treasure Trek',
+                    'Team vs Team',
+                    'Others'
+                ],
+                Levers: [
+                    'Raffle',
+                    'Recurring Rewards',
+                    'Daily Lucky Draw',
+                    'Others'
+                ],
+                Promotions: [
+                    'Main Promo',
+                    'Teaser',
+                    'Preloader',
+                    'Powerplay',
+                    'Others'
+                ]
+            };
+
+            const configFieldWrapper = document.getElementById('liveopsConfigField');
+
+            function updateConfigFieldVisibility(category) {
+                if (!configFieldWrapper) return;
+                if (category === 'Sales' || category === 'Events') {
+                    configFieldWrapper.style.display = 'none';
+                } else {
+                    configFieldWrapper.style.display = '';
+                }
+            }
+
+            const sheetData = {
+                Sales: [
+                    { label: 'high data template 1', url: 'https://example.com/sheets/sales_master.csv' },
+                    { label: 'Stretch data template 2', url: 'https://example.com/sheets/sales_qa.csv' }
+                ],
+                Events: [
+                    { label: 'Events calendar sheet', url: 'https://example.com/sheets/events_calendar.csv' },
+                    { label: 'Events experiment sheet', url: 'https://example.com/sheets/events_experiment.csv' }
+                ],
+                Levers: [
+                    { label: 'Levers config sheet', url: 'https://example.com/sheets/levers_config.csv' }
+                ],
+                Promotions: [
+                    { label: 'Promotions main sheet', url: 'https://example.com/sheets/promos_main.csv' },
+                    { label: 'AB test sheet', url: 'https://example.com/sheets/promos_abtest.csv' }
+                ]
+            };
+
+            const listEl = document.getElementById('liveopsGoLiveList');
+            const tabEls = document.querySelectorAll('.liveops-golive-tab');
+            const configEl = document.querySelector('.liveops-golive-config');
+            const launchesListEl = document.getElementById('liveopsLaunchesList');
+            const scheduleBtn = document.getElementById('liveopsScheduleBtn');
+            const startInput = document.getElementById('liveopsStart');
+            const endInput = document.getElementById('liveopsEnd');
+            const envInputs = document.querySelectorAll('input[name="liveopsEnv"]');
+
+            const launches = [];
+            let launchSortMode = 'type'; // default: promotion/type based
+            let editingLaunch = null; // when set, Schedule will update this launch instead of creating a new one
+
+            function saveLaunches() {
+                try {
+                    localStorage.setItem('liveopsLaunches', JSON.stringify(launches));
+                } catch (e) {
+                    // ignore storage errors in prototype
+                }
+            }
+
+            function loadLaunches() {
+                try {
+                    const raw = localStorage.getItem('liveopsLaunches');
+                    if (!raw) return;
+                    const parsed = JSON.parse(raw);
+                    if (!Array.isArray(parsed)) return;
+                    parsed.forEach(function (l) { launches.push(l); });
+                } catch (e) {
+                    // ignore parse errors and start fresh
+                }
+            }
+
+            function syncEventsToggleToLaunch(key, label, activatedAt, isOn) {
+                if (!isOn) return;
+
+                const env = getSelectedEnv ? getSelectedEnv() : 'prodqa';
+                const start = activatedAt || nowTimestamp();
+
+                const existing = launches.find(function (launch) {
+                    return launch.item && launch.item.category === 'Events' && launch.item.label === label;
+                });
+
+                if (existing) {
+                    existing.start = start;
+                    existing.env = env;
+                    existing.status = 'in-progress';
+                } else {
+                    launches.push({
+                        item: { category: 'Events', label: label },
+                        sheetLabel: '',
+                        sheetUrl: '',
+                        configBank: '',
+                        theme: 'Adhoc toggle',
+                        rooms: '',
+                        builds: '',
+                        start: start,
+                        end: '',
+                        env: env,
+                        status: 'in-progress'
+                    });
+                }
+
+                saveLaunches();
+                renderLaunches();
+            }
+
+            function updateConfigBankOptions() {
+                const configSelect = document.getElementById('liveopsConfigBank');
+                if (!configSelect) return;
+
+                const selectedItemEl = listEl.querySelector('li[data-selected="true"]');
+                const prefix = selectedItemEl ? (selectedItemEl.textContent.trim() + ' ') : '';
+
+                configSelect.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = prefix
+                    ? 'Select a config bank for ' + selectedItemEl.textContent.trim() + '…'
+                    : 'Select a config bank…';
+                configSelect.appendChild(placeholder);
+
+                const configs = ['Config Bank 1', 'Config Bank 2', 'Config Bank 3'];
+                configs.forEach(function (label) {
+                    const opt = document.createElement('option');
+                    opt.value = prefix + label;
+                    opt.textContent = prefix ? (prefix + label) : label;
+                    configSelect.appendChild(opt);
+                });
+            }
+
+            function updateSheetOptionsForCategory(category) {
+                const sheetSelect = document.getElementById('liveopsDataSheet');
+                if (!sheetSelect) return;
+
+                const sheets = sheetData[category] || [];
+                sheetSelect.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = sheets.length ? 'Select a sheet for ' + category + '…' : 'No sheets defined for ' + category;
+                sheetSelect.appendChild(placeholder);
+
+                // For any category, prefix each sheet label with the currently selected item
+                // e.g. "3PO high data template 1", "Magic Carpet Events calendar sheet",
+                // except for Powerplay which uses its own special handler.
+                let itemPrefix = '';
+                const selectedItemEl = listEl.querySelector('li[data-selected="true"]');
+                if (selectedItemEl) {
+                    itemPrefix = selectedItemEl.textContent.trim() + ' ';
+                }
+
+                sheets.forEach(function (s) {
+                    const opt = document.createElement('option');
+                    opt.value = s.url;
+                    opt.setAttribute('data-type', 'sheet');
+                    opt.textContent = itemPrefix ? (itemPrefix + s.label) : s.label;
+                    sheetSelect.appendChild(opt);
+                });
+
+                // For Sales and Events, also merge Config Bank options into this same dropdown
+                if (category === 'Sales' || category === 'Events') {
+                    const configs = ['Config Bank 1', 'Config Bank 2', 'Config Bank 3'];
+                    configs.forEach(function (label) {
+                        const opt = document.createElement('option');
+                        opt.value = 'config:' + label;
+                        opt.setAttribute('data-type', 'config');
+                        const fullLabel = itemPrefix ? (itemPrefix + label) : label;
+                        opt.textContent = fullLabel;
+                        sheetSelect.appendChild(opt);
+                    });
+                }
+            }
+
+            function updateSheetOptionsForPowerplay() {
+                const sheetSelect = document.getElementById('liveopsDataSheet');
+                if (!sheetSelect) return;
+
+                const powerplaySheets = [
+                    'Double Daub Bonanza',
+                    'UPP + Triple Daubs',
+                    'Triumphant Daubs',
+                    'Single Daub only'
+                ];
+
+                sheetSelect.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = 'Select a Powerplay sheet…';
+                sheetSelect.appendChild(placeholder);
+
+                powerplaySheets.forEach(function (label) {
+                    const opt = document.createElement('option');
+                    opt.value = label;
+                    opt.textContent = label;
+                    sheetSelect.appendChild(opt);
+                });
+            }
+
+            function renderGoLive(category) {
+                const items = goLiveData[category] || [];
+                listEl.innerHTML = '';
+                items.forEach(function (label) {
+                    const li = document.createElement('li');
+                    li.textContent = label;
+                    listEl.appendChild(li);
+                });
+
+                // default sheet options for category
+                updateSheetOptionsForCategory(category);
+
+                // reset Config Bank options for this category (no specific item yet)
+                updateConfigBankOptions();
+
+                // hide/show Config Bank field based on category
+                updateConfigFieldVisibility(category);
+
+                // hide config until user picks a specific item
+                if (configEl) {
+                    configEl.style.display = 'none';
+                }
+            }
+
+            tabEls.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    tabEls.forEach(function (t) { t.setAttribute('data-active', 'false'); });
+                    this.setAttribute('data-active', 'true');
+                    const category = this.getAttribute('data-category');
+                    renderGoLive(category);
+                    updateConfigBankOptions(); // Call updateConfigBankOptions when a Go Live category is rendered
+                    updateCreateNewPanelVisibility();
+                });
+            });
+
+            // step 2: when user clicks a specific item, show config
+            listEl.addEventListener('click', function (e) {
+                const target = e.target.closest('li');
+                if (!target) return;
+
+                // mark selected item
+                listEl.querySelectorAll('li').forEach(function (li) {
+                    li.setAttribute('data-selected', 'false');
+                });
+                target.setAttribute('data-selected', 'true');
+
+                // if selected item is Powerplay, use special Powerplay sheet options
+                const selectedLabel = target.textContent.trim();
+                if (selectedLabel === 'Powerplay') {
+                    updateSheetOptionsForPowerplay();
+                } else {
+                    const categoryTab = document.querySelector('.liveops-golive-tab[data-active="true"]');
+                    if (categoryTab) {
+                        const category = categoryTab.getAttribute('data-category');
+                        updateSheetOptionsForCategory(category);
+                    }
+                }
+
+                // update Config Bank options to match the selected item
+                updateConfigBankOptions();
+
+                // show configuration block
+                if (configEl) {
+                    configEl.style.display = 'block';
+                }
+            });
+
+            const themeSelectEl = document.getElementById('liveopsTheme');
+            if (themeSelectEl) {
+                themeSelectEl.addEventListener('change', function () {
+                    updateCreateNewPanelVisibility();
+                });
+            }
+
+            const ctaButton = document.querySelector('.liveops-ideas-btn');
+            const ctaPanel = document.getElementById('liveopsCreateNewPanel');
+            const ctaPreview = document.getElementById('liveopsCtaPreview');
+            const ctaTextarea = ctaPanel ? ctaPanel.querySelector('.liveops-ideas-textarea') : null;
+
+            if (ctaButton && ctaPanel && ctaPreview && ctaTextarea) {
+                ctaButton.addEventListener('click', function () {
+                    const prompt = ctaTextarea.value.trim();
+                    const selected = getSelectedItem ? getSelectedItem() : null;
+                    if (!selected) {
+                        alert('Please select a Sales / Events / Levers / Promotions item before generating a CTA.');
+                        return;
+                    }
+                    if (!prompt) {
+                        alert('Please enter a prompt in the Create New field before generating a CTA.');
+                        return;
+                    }
+
+                    generatedCtas = [];
+                    const baseLabel = selected.label || 'Selection';
+                    const samples = ctaPreview.querySelectorAll('.liveops-cta-sample');
+                    samples.forEach(function (sample, idx) {
+                        const titleEl = sample.querySelector('.liveops-cta-sample-title');
+                        const bodyEl = sample.querySelector('.liveops-cta-sample-body');
+                        const variantNum = idx + 1;
+                        const title = baseLabel + ' Name ' + variantNum;
+                        titleEl.textContent = title;
+                        bodyEl.textContent = '“' + prompt + '”';
+                        sample.setAttribute('data-selected', 'false');
+                        generatedCtas.push({ id: 'cta-' + Date.now() + '-' + idx, label: title });
+                    });
+
+                    ctaPreview.style.display = 'grid';
+                });
+
+                ctaPreview.addEventListener('click', function (e) {
+                    const sample = e.target.closest('.liveops-cta-sample');
+                    if (!sample) return;
+                    const index = parseInt(sample.getAttribute('data-index') || '0', 10);
+                    const cta = generatedCtas[index];
+                    if (!cta) return;
+
+                    ctaPreview.querySelectorAll('.liveops-cta-sample').forEach(function (s) {
+                        s.setAttribute('data-selected', 'false');
+                    });
+                    sample.setAttribute('data-selected', 'true');
+
+                    const themeSelect = document.getElementById('liveopsTheme');
+                    if (!themeSelect) return;
+
+                    let existing = Array.from(themeSelect.options).find(function (opt) {
+                        return opt.value === cta.id;
+                    });
+                    if (!existing) {
+                        existing = document.createElement('option');
+                        existing.value = cta.id;
+                        existing.textContent = cta.label;
+                        themeSelect.appendChild(existing);
+                    }
+
+                    themeSelect.value = cta.id;
+                    updateCreateNewPanelVisibility();
+                });
+            }
+
+            // handle All rooms toggle: disable/enable individual room checkboxes
+            const roomsAllCheckbox = document.getElementById('roomsAll');
+            if (roomsAllCheckbox) {
+                roomsAllCheckbox.addEventListener('change', function () {
+                    const roomsBlock = document.querySelectorAll('.liveops-golive-subblock')[0];
+                    if (!roomsBlock) return;
+                    const roomChecks = Array.from(roomsBlock.querySelectorAll('.liveops-golive-checkbox-grid input[type="checkbox"]'));
+                    roomChecks.forEach(function (cb) {
+                        cb.disabled = roomsAllCheckbox.checked;
+                        if (roomsAllCheckbox.checked) {
+                            cb.checked = false;
+                        }
+                    });
+                });
+            }
+
+            function getSelectedEnv() {
+                let value = 'prodqa';
+                envInputs.forEach(function (input) {
+                    if (input.checked) value = input.value;
+                });
+                return value;
+            }
+
+            function getSelectedItem() {
+                const categoryTab = document.querySelector('.liveops-golive-tab[data-active="true"]');
+                if (!categoryTab) return null;
+                const category = categoryTab.getAttribute('data-category');
+                const itemEl = listEl.querySelector('li[data-selected="true"]');
+                if (!itemEl) return null;
+                return { category, label: itemEl.textContent.trim() };
+            }
+
+            function formatDateTime(dtStr) {
+                if (!dtStr) return '';
+                return dtStr.replace('T', ' ');
+            }
+
+            function recomputeStatuses() {
+                const now = new Date();
+                launches.forEach(function (launch) {
+                    if (launch.status === 'paused' || launch.status === 'stopped') {
+                        return; // keep manual status
+                    }
+                    const start = launch.start ? new Date(launch.start) : null;
+                    const end = launch.end ? new Date(launch.end) : null;
+
+                    if (!start || now < start) {
+                        launch.status = 'ready';
+                    } else if (start && (!end || now <= end)) {
+                        launch.status = 'in-progress';
+                    } else {
+                        launch.status = 'completed';
+                    }
+                });
+            }
+
+            function loadNotificationEmail() {
+                try {
+                    return localStorage.getItem('liveopsNotificationEmail') || '';
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            function saveNotificationEmail(email) {
+                try {
+                    localStorage.setItem('liveopsNotificationEmail', email || '');
+                } catch (e) {
+                    // ignore in prototype
+                }
+            }
+
+            function ensureLaunchId(launch) {
+                if (!launch.id) {
+                    launch.id = 'launch-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+                }
+                if (typeof launch.reminderSent !== 'boolean') {
+                    launch.reminderSent = false;
+                }
+            }
+
+            function sendEmailReminder(launch, email) {
+                // Prototype stub: replace with real backend / email service
+                console.log('Email reminder (mock) to', email, 'for launch', launch);
+                alert('Reminder (mock): ' + (launch.item?.label || 'Launch') + ' will start soon for ' + email);
+            }
+
+            function sendSlackReminder(launch) {
+                // Prototype stub: replace with real Slack webhook / bot call
+                console.log('Slack reminder (mock) for launch', launch);
+            }
+
+            function checkLaunchReminders() {
+                const email = loadNotificationEmail();
+                if (!email) return;
+
+                const now = new Date();
+                const oneHourMs = 60 * 60 * 1000;
+
+                launches.forEach(function (launch) {
+                    ensureLaunchId(launch);
+                    if (!launch.start || launch.reminderSent) return;
+
+                    const startDate = new Date(launch.start);
+                    if (isNaN(startDate.getTime())) return;
+
+                    const diff = startDate - now;
+                    if (diff > 0 && diff <= oneHourMs) {
+                        launch.reminderSent = true;
+                        saveLaunches();
+                        sendEmailReminder(launch, email);
+                        sendSlackReminder(launch);
+                    }
+                });
+            }
+
+            function renderLaunches() {
+                launchesListEl.innerHTML = '';
+                if (launches.length === 0) {
+                    launchesListEl.textContent = 'No launches scheduled yet.';
+                    return;
+                }
+
+                recomputeStatuses();
+
+                // sort before rendering
+                const sorted = launches.slice();
+                sorted.sort(function (a, b) {
+                    if (launchSortMode === 'type') {
+                        // custom order: Promotions, Sales, Events, Levers
+                        const order = { Promotions: 0, Sales: 1, Events: 2, Levers: 3 };
+                        const aCat = a.item.category || '';
+                        const bCat = b.item.category || '';
+                        const aRank = order.hasOwnProperty(aCat) ? order[aCat] : 99;
+                        const bRank = order.hasOwnProperty(bCat) ? order[bCat] : 99;
+                        if (aRank !== bRank) return aRank - bRank;
+                        // within same category, sort by item label
+                        return (a.item.label || '').localeCompare(b.item.label || '');
+                    }
+
+                    if (launchSortMode === 'theme') {
+                        return (a.theme || '').localeCompare(b.theme || '');
+                    }
+
+                    if (launchSortMode === 'status') {
+                        // active (ready/in-progress/paused) before archived (completed/stopped)
+                        function bucket(s) {
+                            if (s === 'completed' || s === 'stopped') return 1; // archived/expired
+                            return 0; // active-ish
+                        }
+                        const aB = bucket(a.status);
+                        const bB = bucket(b.status);
+                        if (aB !== bB) return aB - bB;
+                        // within same bucket, sort by start time
+                        if (!a.start && !b.start) return 0;
+                        if (!a.start) return 1;
+                        if (!b.start) return -1;
+                        return new Date(a.start) - new Date(b.start);
+                    }
+
+                    // default: date/time ascending (start)
+                    if (!a.start && !b.start) return 0;
+                    if (!a.start) return 1;
+                    if (!b.start) return -1;
+                    return new Date(a.start) - new Date(b.start);
+                });
+
+                sorted.forEach(function (launch) {
+                    ensureLaunchId(launch);
+                    const row = document.createElement('div');
+                    row.className = 'liveops-launch-row';
+
+                    const left = document.createElement('div');
+                    const mid = document.createElement('div');
+                    const right = document.createElement('div');
+
+                    const sheetText = launch.sheetLabel || launch.configBank || '—';
+                    const sheetHtml = launch.sheetUrl
+                        ? '<a href="' + launch.sheetUrl + '" target="_blank" rel="noopener noreferrer">' + sheetText + '</a>'
+                        : sheetText;
+
+                    left.innerHTML =
+                        '<div class="liveops-launch-title">' +
+                        launch.item.label + ' · ' + launch.item.category + '</div>' +
+                        '<div class="liveops-launch-sub">Theme: ' + (launch.theme || '—') +
+                        ' · Sheet: ' + sheetHtml + '</div>';
+
+                    mid.innerHTML =
+                        '<div class="liveops-launch-sub">Rooms: ' + (launch.rooms || '—') + '</div>' +
+                        '<div class="liveops-launch-sub">Builds: ' + (launch.builds || '—') + '</div>';
+
+                    const statusSpan = document.createElement('span');
+                    statusSpan.className = 'liveops-launch-status';
+                    statusSpan.setAttribute('data-status', launch.status);
+                    statusSpan.textContent =
+                        launch.status === 'in-progress' ? 'In progress' :
+                        launch.status === 'completed' ? 'Completed' :
+                        launch.status === 'paused' ? 'Paused / on hold' :
+                        launch.status === 'stopped' ? 'Stopped' :
+                        'Ready to go live';
+
+                    const envLabel = launch.env === 'endusers' ? 'End users' : 'Prod QA';
+                    right.innerHTML =
+                        '<div class="liveops-launch-sub">Start (CST): ' + formatDateTime(launch.start) + '</div>' +
+                        '<div class="liveops-launch-sub">End (CST): ' + formatDateTime(launch.end) + '</div>' +
+                        '<div class="liveops-launch-sub">Env: ' + envLabel + '</div>';
+                    right.appendChild(statusSpan);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'liveops-launch-actions';
+                    const pauseBtn = document.createElement('button');
+                    pauseBtn.type = 'button';
+                    pauseBtn.className = 'liveops-btn-pause';
+                    pauseBtn.textContent = 'Pause / hold';
+                    pauseBtn.addEventListener('click', function () {
+                        launch.status = launch.status === 'paused' ? 'ready' : 'paused';
+                        saveLaunches();
+                        renderLaunches();
+                    });
+                    const stopBtn = document.createElement('button');
+                    stopBtn.type = 'button';
+                    stopBtn.className = 'liveops-btn-stop';
+                    stopBtn.textContent = 'Stop';
+                    stopBtn.addEventListener('click', function () {
+                        launch.status = 'stopped';
+                        saveLaunches();
+                        renderLaunches();
+                    });
+                    const relaunchBtn = document.createElement('button');
+                    relaunchBtn.type = 'button';
+                    relaunchBtn.className = 'liveops-btn-relaunch';
+                    relaunchBtn.textContent = 'Relaunch';
+                    relaunchBtn.addEventListener('click', function () {
+                        launch.status = 'ready';
+                        saveLaunches();
+                        renderLaunches();
+                    });
+                    const editBtn = document.createElement('button');
+                    editBtn.type = 'button';
+                    editBtn.className = 'liveops-btn-edit';
+                    editBtn.textContent = 'Edit';
+                    if (launch.status === 'in-progress') {
+                        editBtn.disabled = true;
+                    } else {
+                        editBtn.addEventListener('click', function () {
+                            editingLaunch = launch;
+
+                        const categoryTab = document.querySelector('.liveops-golive-tab[data-category="' + (launch.item.category || '') + '"]');
+                        if (categoryTab) {
+                            tabEls.forEach(function (t) { t.setAttribute('data-active', 'false'); });
+                            categoryTab.setAttribute('data-active', 'true');
+                            renderGoLive(launch.item.category);
+                        }
+
+                        listEl.querySelectorAll('li').forEach(function (li) {
+                            li.setAttribute('data-selected', 'false');
+                        });
+                        const matchLi = Array.from(listEl.querySelectorAll('li')).find(function (li) {
+                            return li.textContent.trim() === (launch.item.label || '').trim();
+                        });
+                        if (matchLi) {
+                            matchLi.setAttribute('data-selected', 'true');
+                        }
+
+                        if (launch.item.label === 'Powerplay') {
+                            updateSheetOptionsForPowerplay();
+                        } else if (launch.item.category) {
+                            updateSheetOptionsForCategory(launch.item.category);
+                        }
+
+                        updateConfigBankOptions();
+
+                        const sheetSelect = document.getElementById('liveopsDataSheet');
+                        if (sheetSelect && launch.sheetLabel) {
+                            Array.from(sheetSelect.options).forEach(function (opt) {
+                                if (opt.textContent.trim() === launch.sheetLabel.trim()) {
+                                    sheetSelect.value = opt.value;
+                                }
+                            });
+                        }
+
+                        const themeSelect = document.getElementById('liveopsTheme');
+                        if (themeSelect && launch.theme) {
+                            themeSelect.value = launch.theme;
+                        }
+
+                        const configSelect = document.getElementById('liveopsConfigBank');
+                        if (configSelect && launch.configBank) {
+                            configSelect.value = launch.configBank;
+                        }
+
+                        if (startInput) startInput.value = launch.start || '';
+                        if (endInput) endInput.value = launch.end || '';
+
+                        envInputs.forEach(function (input) {
+                            input.checked = (input.value === (launch.env || ''));
+                        });
+
+                            if (configEl) {
+                                configEl.style.display = 'block';
+                            }
+                        });
+                    }
+
+                    actions.appendChild(pauseBtn);
+                    actions.appendChild(stopBtn);
+                    actions.appendChild(relaunchBtn);
+                    actions.appendChild(editBtn);
+                    right.appendChild(actions);
+
+                    row.appendChild(left);
+                    row.appendChild(mid);
+                    row.appendChild(right);
+
+                    launchesListEl.appendChild(row);
+                });
+            }
+
+            if (scheduleBtn) {
+                scheduleBtn.addEventListener('click', function () {
+                    const selected = getSelectedItem();
+                    if (!selected) {
+                        alert('Please select a category and a specific item to schedule.');
+                        return;
+                    }
+
+                    const sheetSelect = document.getElementById('liveopsDataSheet');
+                    let sheetUrl = '';
+                    let sheetLabel = '';
+                    let configBank = '';
+
+                    if (sheetSelect && sheetSelect.selectedIndex > 0) {
+                        const opt = sheetSelect.options[sheetSelect.selectedIndex];
+                        const optType = opt.getAttribute('data-type') || 'sheet';
+                        const optValue = opt.value || '';
+                        const optLabel = opt.textContent.trim();
+
+                        if (optType === 'config' || optValue.indexOf('config:') === 0) {
+                            configBank = optLabel;
+                        } else {
+                            sheetUrl = optValue;
+                            sheetLabel = optLabel;
+                        }
+                    }
+
+                    const configSelect = document.getElementById('liveopsConfigBank');
+                    if (configSelect && (selected.category !== 'Sales' && selected.category !== 'Events')) {
+                        // For non-Sales/Events, allow separate Config Bank selection
+                        const rawVal = configSelect.value || '';
+                        if (rawVal) {
+                            configBank = rawVal;
+                        }
+                    }
+                    const theme = document.getElementById('liveopsTheme')?.value || '';
+
+                    const roomsBlock = document.querySelectorAll('.liveops-golive-subblock')[0];
+                    const buildsBlock = document.querySelectorAll('.liveops-golive-subblock')[1];
+
+                    let selectedRooms = '';
+                    if (roomsBlock) {
+                        const allRooms = document.getElementById('roomsAll')?.checked;
+                        const latest3 = document.getElementById('roomsLatest3')?.checked;
+                        const roomChecks = Array.from(roomsBlock.querySelectorAll('.liveops-golive-checkbox-grid input[type="checkbox"]'));
+                        const roomParts = [];
+                        if (allRooms) {
+                            roomParts.push('All rooms');
+                        }
+                        if (latest3) {
+                            roomParts.push('Latest 3 rooms');
+                        }
+                        roomChecks.forEach(function (cb) {
+                            if (cb.checked) {
+                                roomParts.push(cb.parentElement.textContent.trim());
+                            }
+                        });
+                        selectedRooms = roomParts.join(', ');
+                    }
+
+                    let selectedBuilds = '';
+                    if (buildsBlock) {
+                        const active = document.getElementById('buildsActive')?.checked;
+                        const buildChecks = Array.from(buildsBlock.querySelectorAll('.liveops-golive-checkbox-grid input[type="checkbox"]'));
+                        const buildParts = [];
+                        if (active) {
+                            buildParts.push('Active builds');
+                        }
+                        buildChecks.forEach(function (cb) {
+                            if (cb.checked) {
+                                buildParts.push(cb.parentElement.textContent.trim());
+                            }
+                        });
+                        selectedBuilds = buildParts.join(', ');
+                    }
+
+                    // mandatory field validation
+                    if (selected.category === 'Sales' || selected.category === 'Events') {
+                        if (!sheetUrl && !configBank) {
+                            alert('Please choose a Data sheet / Config option before scheduling.');
+                            return;
+                        }
+                    } else {
+                        if (!sheetUrl) {
+                            alert('Please choose a Data sheet before scheduling.');
+                            return;
+                        }
+                    }
+                    if (!theme) {
+                        alert('Please choose a Theme before scheduling.');
+                        return;
+                    }
+                    if (!selectedRooms) {
+                        alert('Please choose at least one Room option before scheduling.');
+                        return;
+                    }
+                    if (!selectedBuilds) {
+                        alert('Please choose at least one Build option before scheduling.');
+                        return;
+                    }
+
+                    const start = startInput ? startInput.value : '';
+                    const end = endInput ? endInput.value : '';
+                    const env = getSelectedEnv();
+
+                    // prevent exact replica: same item, env, time, theme, rooms and builds
+                    const isDuplicate = launches.some(function (launch) {
+                        return (
+                            launch.item.category === selected.category &&
+                            launch.item.label === selected.label &&
+                            launch.env === env &&
+                            launch.start === start &&
+                            launch.theme === theme &&
+                            launch.rooms === selectedRooms &&
+                            launch.builds === selectedBuilds &&
+                            launch.sheetUrl === sheetUrl &&
+                            (launch.configBank || '') === (configBank || '')
+                        );
+                    });
+                    if (isDuplicate) {
+                        alert('An identical launch (same item, time, env, theme, rooms and builds) already exists.');
+                        return;
+                    }
+
+                    if (editingLaunch) {
+                        editingLaunch.item = selected;
+                        editingLaunch.sheetLabel = sheetLabel;
+                        editingLaunch.sheetUrl = sheetUrl;
+                        editingLaunch.configBank = configBank;
+                        editingLaunch.theme = theme;
+                        editingLaunch.rooms = selectedRooms;
+                        editingLaunch.builds = selectedBuilds;
+                        editingLaunch.start = start;
+                        editingLaunch.end = end;
+                        editingLaunch.env = env;
+                        editingLaunch.status = 'ready';
+                        editingLaunch.reminderSent = false;
+                    } else {
+                        const id = 'launch-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+                        launches.push({
+                            id,
+                            item: selected,
+                            sheetLabel,
+                            sheetUrl,
+                            configBank,
+                            theme,
+                            rooms: selectedRooms,
+                            builds: selectedBuilds,
+                            start,
+                            end,
+                            env,
+                            status: 'ready',
+                            reminderSent: false
+                        });
+                    }
+
+                    editingLaunch = null;
+                    saveLaunches();
+                    renderLaunches();
+                });
+            }
+
+            const sortSelect = document.getElementById('liveopsSort');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function () {
+                    launchSortMode = this.value;
+                    renderLaunches();
+                });
+            }
+
+            const notificationEmailInput = document.getElementById('liveopsNotificationEmail');
+            const notificationEmailSaveBtn = document.getElementById('liveopsNotificationSave');
+            if (notificationEmailInput) {
+                notificationEmailInput.value = loadNotificationEmail();
+            }
+            if (notificationEmailInput && notificationEmailSaveBtn) {
+                notificationEmailSaveBtn.addEventListener('click', function () {
+                    const email = (notificationEmailInput.value || '').trim();
+                    saveNotificationEmail(email);
+                    alert('Notification email saved for launch reminders.');
+                });
+            }
+
+            // load any previously saved launches and render them on initial load
+            loadLaunches();
+            renderLaunches();
+            updateCreateNewPanelVisibility();
+
+            // check for upcoming launches every minute and fire mock reminders
+            checkLaunchReminders();
+            setInterval(checkLaunchReminders, 60 * 1000);
+
+            // AI Chatbot Setup
+            const aiToggle = document.getElementById('liveopsAIToggle');
+            const aiChat = document.getElementById('liveopsAIChat');
+            const aiClose = document.getElementById('liveopsAIClose');
+            const aiMessages = document.getElementById('liveopsAIMessages');
+            const aiInput = document.getElementById('liveopsAIInput');
+            const aiSendBtn = document.getElementById('liveopsAISend');
+            const aiVoiceBtn = document.getElementById('liveopsAIVoice');
+            const aiTyping = document.getElementById('liveopsAITyping');
+            const aiBadge = document.getElementById('liveopsAIBadge');
+            let recognition = null;
+            let synthesis = window.speechSynthesis;
+            let isListeningForResponse = false;
+            let unreadCount = 0;
+            let conversationContext = {
+                waitingFor: null, // What info we're waiting for (e.g., 'username', 'password')
+                workflowType: null, // Type of workflow (e.g., 'login', 'schedule_launch')
+                collectedData: {} // Data collected during workflow
+            };
+            let userLocation = {
+                city: 'Unknown',
+                country: 'Unknown',
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                localTime: new Date().toLocaleTimeString()
+            };
+            let lastActivityTime = Date.now();
+            let idleCheckInterval = null;
+            let hasAskedIdleQuestion = false;
+            let isPageVisible = true;
+            let isRoseActive = false;
+            let isListeningMode = false;
+            let autoListenAfterResponse = false;
+
+            // Load voices for speech synthesis
+            if (synthesis) {
+                synthesis.addEventListener('voiceschanged', function() {
+                    const voices = synthesis.getVoices();
+                    console.log('Available voices:', voices.map(v => v.name));
+                });
+                // Trigger voice loading
+                synthesis.getVoices();
+            }
+
+            // Track page visibility - only speak when page is active
+            document.addEventListener('visibilitychange', function() {
+                isPageVisible = !document.hidden;
+                if (!isPageVisible) {
+                    // Stop speaking when user switches tabs
+                    if (synthesis) synthesis.cancel();
+                }
+            });
+
+            // Initialize Speech Recognition (browser support check)
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    aiVoiceBtn.classList.add('listening');
+                    aiVoiceBtn.innerHTML = '🎤';
+                    console.log('🎙️ Rose is listening...');
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    console.log('Voice command:', transcript);
+                    
+                    // Check for wake word "Hey Rose" or "Rose"
+                    const lowerTranscript = transcript.toLowerCase();
+                    if ((lowerTranscript.includes('hey rose') || lowerTranscript.includes('hi rose') || lowerTranscript.startsWith('rose')) && !isRoseActive) {
+                        console.log('🌹 Wake word detected! Activating Rose...');
+                        isRoseActive = true;
+                        isListeningMode = true;
+                        autoListenAfterResponse = true;
+                        
+                        // Open chat window if not already open
+                        if (!aiChat.classList.contains('active')) {
+                            console.log('💬 Opening chat window...');
+                            aiChat.classList.add('active');
+                            unreadCount = 0;
+                            aiBadge.classList.remove('active');
+                        }
+                        
+                        updateHeaderStatus();
+                        const greeting = '👋 Hi! I\'m Rose, your AI assistant. I\'ll now listen to your commands continuously. Say "stop listening" when you\'re done. What would you like me to do?';
+                        addMessage('Hey Rose', 'user');
+                        addMessage(greeting, 'bot');
+                        console.log('🗣️ Speaking greeting...');
+                        speak(greeting);
+                        resetIdleTimer();
+                        // Auto-listen after greeting
+                        setTimeout(function() {
+                            if (recognition && autoListenAfterResponse && isPageVisible) {
+                                try {
+                                    recognition.start();
+                                    console.log('Auto-restarted listening after wake word');
+                                } catch(e) {
+                                    console.log('Could not restart listening:', e);
+                                }
+                            }
+                        }, 7000);
+                        return;
+                    }
+                    
+                    // Stop listening command
+                    if (lowerTranscript.includes('stop listening') || lowerTranscript.includes('stop rose')) {
+                        isListeningMode = false;
+                        autoListenAfterResponse = false;
+                        updateHeaderStatus();
+                        const msg = '✋ Okay, I\'ve stopped continuous listening. Click the microphone button when you need me again!';
+                        addMessage(transcript, 'user');
+                        addMessage(msg, 'bot');
+                        speak(msg);
+                        return;
+                    }
+                    
+                    addMessage(transcript, 'user');
+                    processCommand(transcript);
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    aiVoiceBtn.classList.remove('listening');
+                    aiVoiceBtn.innerHTML = '🎙️';
+                };
+
+                recognition.onend = function() {
+                    aiVoiceBtn.classList.remove('listening');
+                    aiVoiceBtn.innerHTML = '🎙️';
+                    isListeningForResponse = false;
+                };
+            }
+
+            // Toggle chat window
+            aiToggle.addEventListener('click', function() {
+                aiChat.classList.toggle('active');
+                if (aiChat.classList.contains('active')) {
+                    unreadCount = 0;
+                    aiBadge.classList.remove('active');
+                    aiInput.focus();
+                }
+                updateHeaderStatus();
+            });
+            
+            function updateHeaderStatus() {
+                const statusText = document.querySelector('.liveops-ai-info p');
+                if (statusText) {
+                    if (isListeningMode && autoListenAfterResponse) {
+                        statusText.textContent = 'Listening... • Say "stop listening" to pause';
+                    } else {
+                        statusText.textContent = 'Online • Say "Hey Rose" to activate';
+                    }
+                }
+            }
+
+            aiClose.addEventListener('click', function() {
+                aiChat.classList.remove('active');
+            });
+
+            // Send message on button click
+            aiSendBtn.addEventListener('click', function() {
+                sendMessage();
+            });
+
+            // Send message on Enter key
+            aiInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Track user activity
+            aiInput.addEventListener('input', resetIdleTimer);
+            document.addEventListener('click', resetIdleTimer);
+            document.addEventListener('keypress', resetIdleTimer);
+
+            // Voice input button
+            aiVoiceBtn.addEventListener('click', function() {
+                if (!recognition) {
+                    addMessage('Voice recognition is not supported in your browser. Try Chrome or Edge.', 'bot');
+                    return;
+                }
+                
+                if (aiVoiceBtn.classList.contains('listening')) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+
+            function sendMessage() {
+                const message = aiInput.value.trim();
+                if (!message) return;
+                
+                addMessage(message, 'user');
+                aiInput.value = '';
+                processCommand(message);
+            }
+
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'liveops-ai-message' + (sender === 'user' ? ' user' : '');
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'liveops-ai-message-avatar';
+                avatar.textContent = sender === 'user' ? (username ? username[0].toUpperCase() : '👤') : '🌹';
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'liveops-ai-message-bubble';
+                bubble.textContent = text;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(bubble);
+                aiMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+                
+                // Update badge if chat is closed
+                if (sender === 'bot' && !aiChat.classList.contains('active')) {
+                    unreadCount++;
+                    aiBadge.textContent = unreadCount;
+                    aiBadge.classList.add('active');
+                }
+            }
+
+            function showTyping() {
+                aiTyping.classList.add('active');
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+            }
+
+            function hideTyping() {
+                aiTyping.classList.remove('active');
+            }
+            
+            // Get user's geolocation
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Try to get city/country from IP geolocation API
+                    fetch('https://ipapi.co/json/')
+                        .then(res => res.json())
+                        .then(data => {
+                            userLocation.city = data.city || 'Unknown';
+                            userLocation.country = data.country_name || 'Unknown';
+                            console.log('User location:', userLocation);
+                        })
+                        .catch(err => console.log('Location API error:', err));
+                });
+            }
+            
+            // Start idle detection (check every 30 seconds)
+            function resetIdleTimer() {
+                lastActivityTime = Date.now();
+                hasAskedIdleQuestion = false;
+            }
+            
+            function checkIdleAndAsk() {
+                const idleTime = Date.now() - lastActivityTime;
+                const thirtySeconds = 30 * 1000;
+                
+                if (idleTime >= thirtySeconds && !hasAskedIdleQuestion) {
+                    hasAskedIdleQuestion = true;
+                    const launches = JSON.parse(localStorage.getItem('liveopsLaunches') || '[]');
+                    const toggles = JSON.parse(localStorage.getItem('liveopsToggles') || '{}');
+                    const activeCount = Object.values(toggles).filter(Boolean).length;
+                    
+                    const helpfulQuestions = [
+                        '🤔 Still there? Need help with anything? I can check your launches or events.',
+                        '💭 Haven\'t heard from you in a bit. Would you like me to show your dashboard status?',
+                        '👋 Just checking in! Do you need help scheduling a launch or checking events?',
+                        '🔍 Are you stuck on something? I can guide you through any task.',
+                        '💡 Need a hand? Ask me about your launches, events, or anything else!'
+                    ];
+                    
+                    const question = helpfulQuestions[Math.floor(Math.random() * helpfulQuestions.length)];
+                    addMessage(question, 'bot');
+                    speak(question);
+                }
+            }
+            
+            // Start checking every 30 seconds
+            idleCheckInterval = setInterval(checkIdleAndAsk, 30000);
+
+            // Welcome message on page load
+            setTimeout(function() {
+                const welcomeMsg = 'Hello ' + (username || 'there') + '! 👋 I\'m Rose, your AI assistant. Say "Hey Rose" to activate me, or just type your question!';
+                addMessage(welcomeMsg, 'bot');
+                if (isPageVisible) {
+                    speak(welcomeMsg);
+                }
+                // Show badge to draw attention
+                if (!aiChat.classList.contains('active')) {
+                    unreadCount = 1;
+                    aiBadge.textContent = '1';
+                    aiBadge.classList.add('active');
+                }
+            }, 2000);
+
+            function speak(text) {
+                // Only speak if page is visible/active
+                if (!isPageVisible) {
+                    console.log('Page not visible, skipping speech');
+                    return;
+                }
+                
+                if (synthesis) {
+                    synthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.1;
+                    utterance.volume = 1.0;
+                    
+                    // Select a female voice (Rose)
+                    const voices = synthesis.getVoices();
+                    const femaleVoice = voices.find(voice => 
+                        voice.name.includes('Female') || 
+                        voice.name.includes('Samantha') || 
+                        voice.name.includes('Victoria') ||
+                        voice.name.includes('Karen') ||
+                        voice.name.includes('Moira') ||
+                        voice.name.includes('Google US English Female') ||
+                        voice.name.includes('Microsoft Zira') ||
+                        (voice.name.includes('en') && voice.name.toLowerCase().includes('female'))
+                    );
+                    
+                    if (femaleVoice) {
+                        utterance.voice = femaleVoice;
+                        console.log('Rose speaking with voice:', femaleVoice.name);
+                    }
+                    
+                    // Auto-restart listening after speaking (if in continuous mode)
+                    utterance.onend = function() {
+                        if (autoListenAfterResponse && recognition && isPageVisible) {
+                            setTimeout(function() {
+                                try {
+                                    recognition.start();
+                                    console.log('Auto-restarted listening');
+                                } catch(e) {
+                                    console.log('Already listening or error:', e);
+                                }
+                            }, 1000);
+                        }
+                    };
+                    
+                    synthesis.speak(utterance);
+                }
+            }
+
+            function processCommand(command) {
+                showTyping();
+                
+                setTimeout(function() {
+                    hideTyping();
+                    
+                    const cmd = command.toLowerCase();
+                    let response = '';
+                    
+                    // Handle multi-step workflows first
+                    if (conversationContext.waitingFor) {
+                        handleWorkflowStep(command);
+                        return;
+                    }
+
+                    // Action commands - perform tasks
+                    if (cmd.includes('open') && (cmd.includes('chat') || cmd.includes('ai'))) {
+                        if (!aiChat.classList.contains('active')) {
+                            aiChat.classList.add('active');
+                            unreadCount = 0;
+                            aiBadge.classList.remove('active');
+                        }
+                        response = '✅ Chat window is now open! What else can I do for you?';
+                    } else if (cmd.includes('close') && (cmd.includes('chat') || cmd.includes('window'))) {
+                        aiChat.classList.remove('active');
+                        response = '✅ Chat closed! Say "Hey Rose" to open it again.';
+                    } else if (cmd.includes('click') || cmd.includes('select')) {
+                        // Handle tab/button clicks
+                        if (cmd.includes('sales')) {
+                            const salesTab = document.querySelector('[data-category="Sales"]');
+                            if (salesTab) salesTab.click();
+                            response = '✅ Sales tab selected! What would you like to launch?';
+                        } else if (cmd.includes('event')) {
+                            const eventsTab = document.querySelector('[data-category="Events"]');
+                            if (eventsTab) eventsTab.click();
+                            response = '✅ Events tab selected! What would you like to launch?';
+                        } else if (cmd.includes('lever')) {
+                            const leversTab = document.querySelector('[data-category="Levers"]');
+                            if (leversTab) leversTab.click();
+                            response = '✅ Levers tab selected! What would you like to launch?';
+                        } else if (cmd.includes('promotion')) {
+                            const promoTab = document.querySelector('[data-category="Promotions"]');
+                            if (promoTab) promoTab.click();
+                            response = '✅ Promotions tab selected! What would you like to launch?';
+                        } else {
+                            response = '🤔 I can click Sales, Events, Levers, or Promotions tabs. Which one would you like?';
+                        }
+                    } else if (cmd.includes('scroll down') || cmd.includes('scroll to')) {
+                        window.scrollBy(0, 300);
+                        response = '✅ Scrolled down! Say "scroll up" to go back.';
+                    } else if (cmd.includes('scroll up')) {
+                        window.scrollBy(0, -300);
+                        response = '✅ Scrolled up!';
+                    } else if (cmd.includes('go to top') || cmd.includes('scroll to top')) {
+                        window.scrollTo(0, 0);
+                        response = '✅ Scrolled to top!';
+                    }
+                    // Dashboard-specific commands
+                    else if (cmd.includes('yes') || cmd.includes('sure') || cmd.includes('okay') || cmd.includes('please')) {
+                        const launches = JSON.parse(localStorage.getItem('liveopsLaunches') || '[]');
+                        const toggles = JSON.parse(localStorage.getItem('liveopsToggles') || '{}');
+                        const activeCount = Object.values(toggles).filter(Boolean).length;
+                        response = '📊 You have ' + launches.length + ' scheduled launches and ' + activeCount + ' active events. ';
+                        if (launches.length > 0) {
+                            response += 'Your next launch is ' + launches[0].item + '. ';
+                        }
+                        response += 'Would you like to schedule a new launch or check your events?';
+                    } else if (cmd.includes('no') || cmd.includes('not now') || cmd.includes('later')) {
+                        response = '👍 No problem! Let me know if you need anything. I\'m always here to help!';
+                    } else if (cmd.includes('login') || cmd.includes('log in')) {
+                        startWorkflow('login');
+                        return;
+                    } else if (cmd.includes('launch') || cmd.includes('schedule')) {
+                        const launches = JSON.parse(localStorage.getItem('liveopsLaunches') || '[]');
+                        response = '🚀 You have ' + launches.length + ' scheduled launch' + (launches.length !== 1 ? 'es' : '') + '. ';
+                        if (launches.length > 0) {
+                            response += 'The next one is ' + launches[0].item + '. ';
+                        }
+                        response += 'Would you like to add a new launch?';
+                    } else if (cmd.includes('event') || cmd.includes('offer')) {
+                        const toggles = JSON.parse(localStorage.getItem('liveopsToggles') || '{}');
+                        const activeCount = Object.values(toggles).filter(Boolean).length;
+                        response = '✨ You have ' + activeCount + ' active live event' + (activeCount !== 1 ? 's' : '') + '. ';
+                        response += 'Do you want to activate or deactivate any events?';
+                    } else if (cmd.includes('status') || cmd.includes('dashboard')) {
+                        const launches = JSON.parse(localStorage.getItem('liveopsLaunches') || '[]');
+                        const toggles = JSON.parse(localStorage.getItem('liveopsToggles') || '{}');
+                        const activeCount = Object.values(toggles).filter(Boolean).length;
+                        response = '📈 Dashboard status: ' + launches.length + ' scheduled launches and ' + activeCount + ' active events. ';
+                        response += 'Is there anything specific you\'d like to know more about?';
+                    }
+                    // Generic questions
+                    else if (cmd.includes('time') || cmd.includes('what time')) {
+                        const now = new Date();
+                        response = '🕐 It\'s currently ' + now.toLocaleTimeString() + ' in your timezone (' + userLocation.timezone + '). How can I help you with your schedule?';
+                    } else if (cmd.includes('weather') || cmd.includes('temperature')) {
+                        response = '🌤️ I don\'t have real-time weather data, but you\'re in ' + userLocation.city + ', ' + userLocation.country + '. Would you like me to help you with your launches instead?';
+                    } else if (cmd.includes('where am i') || cmd.includes('location') || cmd.includes('my location')) {
+                        response = '📍 You\'re in ' + userLocation.city + ', ' + userLocation.country + ' (Timezone: ' + userLocation.timezone + '). Your local time is ' + new Date().toLocaleTimeString() + '.';
+                    } else if (cmd.includes('joke') || cmd.includes('funny') || cmd.includes('bored')) {
+                        const jokes = [
+                            '😄 Why did the game developer go broke? Because they kept losing their cache!',
+                            '🎮 How many programmers does it take to launch a game? None, that\'s a hardware problem!',
+                            '😂 Why do LiveOps managers make great comedians? They know all about timing!',
+                            '🤣 What\'s a game designer\'s favorite type of music? Synth-wave, because it loops perfectly!'
+                        ];
+                        response = jokes[Math.floor(Math.random() * jokes.length)] + ' Need anything else to brighten your day?';
+                    } else if (cmd.includes('thank') || cmd.includes('thanks')) {
+                        response = '😊 You\'re very welcome! I\'m happy to help. Anything else you need?';
+                    } else if (cmd.includes('hello') || cmd.includes('hi')) {
+                        response = '👋 Hello! I\'m your LiveOps AI assistant. How can I help you today?';
+                    } else if (cmd.includes('help') || cmd.includes('what can you do')) {
+                        response = '💡 I can help you with:\n\n🎯 Voice Actions:\n- "Click Sales/Events/Levers/Promotions"\n- "Scroll up/down" or "Go to top"\n- "Open/Close chat"\n\n📊 Dashboard:\n- "Status" - Full overview\n- "Check launches/events"\n\n🕐 General:\n- "What time is it?"\n- "Where am I?"\n- "Tell me a joke"\n- Math (e.g., "Calculate 10 + 5")\n\n🔧 Control:\n- "Stop listening" - Turn off continuous mode\n\nWhat would you like me to do?';
+                    } else if (cmd.match(/\d+\s*[\+\-\*\/]\s*\d+/)) {
+                        // Simple math
+                        try {
+                            const result = eval(cmd.replace(/[^\d\+\-\*\/\.\(\)]/g, ''));
+                            response = '🧮 The answer is: ' + result + '. Need any more calculations?';
+                        } catch(e) {
+                            response = '🤔 I couldn\'t calculate that. Try something like "10 + 5" or "20 * 3".';
+                        }
+                    } else if (cmd.includes('who are you') || cmd.includes('what are you')) {
+                        response = '🤖 I\'m your LiveOps AI Assistant! I help manage your dashboard, answer questions, and keep you company. I can handle tasks, think through problems, and even chat when you\'re bored. What would you like to know?';
+                    } else {
+                        response = '🤔 I\'m not sure about that, but I\'m learning! Try asking about launches, events, the time, or just chat with me. What\'s on your mind?';
+                    }
+                    
+                    isRoseActive = true; // Mark Rose as active after any command
+
+                    addMessage(response, 'bot');
+                    if (isPageVisible) {
+                        speak(response);
+                    }
+                }, 1500);
+            }
+
+            function startWorkflow(type) {
+                conversationContext.workflowType = type;
+                conversationContext.collectedData = {};
+                
+                if (type === 'login') {
+                    conversationContext.waitingFor = 'username';
+                    const msg = '🔐 I\'ll help you log in! First, what\'s your username?';
+                    addMessage(msg, 'bot');
+                    if (isPageVisible) speak(msg);
+                }
+            }
+
+            function handleWorkflowStep(input) {
+                const type = conversationContext.workflowType;
+                
+                if (type === 'login') {
+                    if (conversationContext.waitingFor === 'username') {
+                        conversationContext.collectedData.username = input.trim();
+                        conversationContext.waitingFor = 'password';
+                        const msg = '✅ Got it, username is "' + input.trim() + '". Now, what\'s your password?';
+                        addMessage(msg, 'bot');
+                        if (isPageVisible) speak(msg);
+                    } else if (conversationContext.waitingFor === 'password') {
+                        conversationContext.collectedData.password = input.trim();
+                        conversationContext.waitingFor = null;
+                        
+                        const username = conversationContext.collectedData.username;
+                        const password = conversationContext.collectedData.password;
+                        
+                        // Just confirm - we're already on dashboard
+                        const msg = '✅ Perfect! I have your credentials: username "' + username + '" and password "' + password + '". You\'re all set!';
+                        addMessage(msg, 'bot');
+                        if (isPageVisible) speak(msg);
+                        
+                        // Reset workflow
+                        conversationContext = {waitingFor: null, workflowType: null, collectedData: {}};
+                    }
+                }
+            }
+            
+            // Ask contextual questions when user interacts with tabs
+            const goliveTabs = document.querySelectorAll('.liveops-golive-tab');
+            goliveTabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    resetIdleTimer();
+                    const category = this.getAttribute('data-category');
+                    setTimeout(function() {
+                        const question = '📂 You selected ' + category + '. What would you like to launch?';
+                        addMessage(question, 'bot');
+                        speak(question);
+                    }, 500);
+                });
+            });
+            
+            // Welcome message with instructions
+            setTimeout(function() {
+                const welcomeMsg = '👋 Hi! I\'m Rose, your AI assistant. Click the microphone button 🎙️ and say "Hey Rose" to activate me!';
+                addMessage(welcomeMsg, 'bot');
+                if (!aiChat.classList.contains('active')) {
+                    unreadCount = 1;
+                    aiBadge.textContent = '1';
+                    aiBadge.classList.add('active');
+                }
+            }, 2000);
+
+        });
+    </script>
+</head>
+<body class="liveops-dashboard-body">
+    <div class="liveops-ai-bot">
+        <div id="liveopsAIChat" class="liveops-ai-chat">
+            <div class="liveops-ai-header">
+                <div class="liveops-ai-avatar">🌹</div>
+                <div class="liveops-ai-info">
+                    <h3>Rose - AI Assistant</h3>
+                    <p>Online • Say "Hey Rose" to activate</p>
+                </div>
+                <button id="liveopsAIClose" class="liveops-ai-close">×</button>
+            </div>
+            <div id="liveopsAIMessages" class="liveops-ai-messages">
+                <div id="liveopsAITyping" class="liveops-ai-typing">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="liveops-ai-input-area">
+                <input id="liveopsAIInput" class="liveops-ai-input" type="text" placeholder="Type your message...">
+                <button id="liveopsAIVoice" class="liveops-ai-action-btn" title="Voice Input">🎙️</button>
+                <button id="liveopsAISend" class="liveops-ai-action-btn" title="Send Message">➤</button>
+            </div>
+        </div>
+        <button id="liveopsAIToggle" class="liveops-ai-toggle" title="AI Assistant">
+            💬
+            <span id="liveopsAIBadge" class="liveops-ai-badge"></span>
+        </button>
+    </div>
+    <div class="liveops-shell">
+        <header class="liveops-topbar">
+            <div class="liveops-topbar-left">
+                <div class="liveops-logo-pill">
+                    <img src="8C569E66-41D9-48BE-BF89-1D90B8F220A8_4_5005_c.jpeg" alt="Scopely Logo">
+                </div>
+                <div class="liveops-title-block">
+                    <h1>Real Time LiveOps</h1>
+                    <span>Scopely Operational Dashboard</span>
+                </div>
+            </div>
+            <div class="liveops-user-pill">
+                <div id="liveopsUserInitial" class="liveops-user-badge">G</div>
+                <span id="liveopsUserName">Guest</span>
+            </div>
+        </header>
+
+        <main class="liveops-layout">
+            <section class="liveops-panel">
+                <div class="liveops-panel-header">
+                    <h2 class="liveops-panel-title">Live Events & Offers</h2>
+                    <span class="liveops-chip">Realtime preview</span>
+                </div>
+                <p style="font-size:0.8rem;margin:0 0 6px;color:#6b4a86;">Toggle key Bingo Bash events for your players in real time.</p>
+                <div class="liveops-toggle-row">
+                    <div class="liveops-toggle">
+                        <span>Happy hour deal</span>
+                        <div class="liveops-switch" data-on="false" data-key="happyHourDeal">
+                            <div class="liveops-switch-handle"></div>
+                        </div>
+                    </div>
+                    <div class="liveops-toggle">
+                        <span>Album Golden Deal</span>
+                        <div class="liveops-switch" data-on="false" data-key="albumGoldenDeal">
+                            <div class="liveops-switch-handle"></div>
+                        </div>
+                    </div>
+                    <div class="liveops-toggle">
+                        <span>Room bundle sale</span>
+                        <div class="liveops-switch" data-on="false" data-key="roomBundleSale">
+                            <div class="liveops-switch-handle"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="liveops-meta">Changes here are for demo only and are not connected to production.</div>
+            </section>
+
+            <section class="liveops-panel">
+                <div class="liveops-panel-header">
+                    <h2 class="liveops-panel-title">Player Segments & Health</h2>
+                </div>
+                <div class="liveops-stat-row">
+                    <div class="liveops-stat">
+                        <strong>Active Today</strong>
+                        18,420 players
+                    </div>
+                    <div class="liveops-stat">
+                        <strong>In Live Events</strong>
+                        7,905 players
+                    </div>
+                </div>
+                <ul class="liveops-segments-list">
+                    <li>Whales – 2.1% • Offers tuned for high-value players</li>
+                    <li>Core – 63.4% • Default Bingo Bash LiveOps path</li>
+                    <li>New – 34.5% • Onboarding bonus events enabled</li>
+                </ul>
+                <div class="liveops-footer-row">
+                    <span>Ready to plug into your real data pipeline.</span>
+                    <button class="liveops-cta-btn" type="button">Launch Live Control</button>
+                </div>
+                <div class="liveops-meta">
+                    For the prototype, this dashboard is static and does not call a backend.
+                </div>
+            </section>
+
+            <section class="liveops-panel">
+                <div class="liveops-panel-header">
+                    <h2 class="liveops-panel-title">Notifications</h2>
+                </div>
+                <p style="font-size:0.8rem;margin:0 0 6px;color:#6b4a86;">Save an email to get a reminder 1 hour before a scheduled launch (mock only).</p>
+                <div class="liveops-notify-row">
+                    <input id="liveopsNotificationEmail" class="liveops-notify-input" type="email" placeholder="you@company.com">
+                    <button id="liveopsNotificationSave" type="button" class="liveops-notify-btn">Save</button>
+                </div>
+                <div class="liveops-meta">In this prototype, reminders show as on-screen alerts and console logs. Hook this up to your email / Slack backend later.</div>
+            </section>
+
+            <section class="liveops-panel liveops-panel-golive">
+                <div class="liveops-golive-header">
+                    <h2 class="liveops-panel-title">Go Live</h2>
+                </div>
+                <p style="font-size:0.8rem;margin:0 0 6px;color:#6b4a86;">Choose what you want to go live with, then pick a configuration.</p>
+                <div class="liveops-golive-tabs">
+                    <button type="button" class="liveops-golive-tab" data-category="Sales" data-active="false">Sales</button>
+                    <button type="button" class="liveops-golive-tab" data-category="Events" data-active="false">Events</button>
+                    <button type="button" class="liveops-golive-tab" data-category="Levers" data-active="false">Levers</button>
+                    <button type="button" class="liveops-golive-tab" data-category="Promotions" data-active="false">Promotions</button>
+                </div>
+                <div class="liveops-golive-layout">
+                    <ul id="liveopsGoLiveList" class="liveops-golive-list"></ul>
+
+                    <div class="liveops-golive-config">
+                    <div class="liveops-golive-row">
+                        <div class="liveops-golive-field">
+                            <div class="liveops-label">Sheet / Config Bank</div>
+                            <select id="liveopsDataSheet" class="liveops-input">
+                                <option value="">Select a sheet or config…</option>
+                                <option value="https://example.com/sheets/liveops_sample_1.csv">Sample LiveOps Sheet 1</option>
+                                <option value="https://example.com/sheets/liveops_sample_2.csv">Sample LiveOps Sheet 2</option>
+                                <option value="https://example.com/sheets/liveops_sample_3.csv">Sample LiveOps Sheet 3</option>
+                            </select>
+
+                            <div id="liveopsConfigField" style="display: none;">
+                                <div class="liveops-label" style="margin-top:6px;">Config Bank</div>
+                                <select id="liveopsConfigBank" class="liveops-input">
+                                    <option value="">Select a config bank…</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="liveops-golive-field">
+                            <div class="liveops-label">Theme</div>
+                            <select id="liveopsTheme" class="liveops-input">
+                                <option value="generic">Generic</option>
+                                <option value="xmas">Xmas</option>
+                                <option value="newyear">New Year</option>
+                                <option value="halloween">Halloween</option>
+                                <option value="valentine">Valentine</option>
+                                <option value="create-new">Create new…</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="liveops-golive-row">
+                        <div class="liveops-golive-field">
+                            <div class="liveops-label">Rooms</div>
+                            <div class="liveops-golive-subblock">
+                                <label class="liveops-checkbox-line">
+                                    <input type="checkbox" id="roomsAll">
+                                    <span>All rooms</span>
+                                </label>
+                                <label class="liveops-checkbox-line">
+                                    <input type="checkbox" id="roomsLatest3">
+                                    <span>Latest 3 rooms</span>
+                                </label>
+                                <div class="liveops-golive-checkbox-grid">
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 235</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 236</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 237</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 238</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 239</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 240</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 241</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 242</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Room 243</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="liveops-golive-field">
+                            <div class="liveops-label">Builds</div>
+                            <div class="liveops-golive-subblock">
+                                <label class="liveops-checkbox-line">
+                                    <input type="checkbox" id="buildsActive">
+                                    <span>Active builds</span>
+                                </label>
+                                <div class="liveops-golive-checkbox-grid">
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Build 240</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Build 241</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Build 242</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Build 243</label>
+                                    <label class="liveops-checkbox-line"><input type="checkbox"> Legacy</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="liveops-meta">This is a UI prototype. Going live here does not impact real players.</div>
+            </section>
+
+            <section id="liveopsCreateNewPanel" class="liveops-panel liveops-ideas-panel" style="display:none;">
+                <div class="liveops-panel-header">
+                    <h2 class="liveops-panel-title">Create New</h2>
+                </div>
+                <p style="font-size:0.8rem;margin:0 0 6px;color:#6b4a86;">Jot down quick LiveOps ideas or prompts before turning them into configs.</p>
+                <textarea class="liveops-ideas-textarea" placeholder="Describe your new idea or prompt here… (e.g. Flash sale for 3PO players this weekend)"></textarea>
+                <div class="liveops-ideas-actions">
+                    <button type="button" class="liveops-ideas-btn">Generate name</button>
+                </div>
+                <div id="liveopsCtaPreview" class="liveops-cta-preview-grid" style="display:none;">
+                    <div class="liveops-cta-sample" data-index="0">
+                        <div class="liveops-cta-sample-title">Sample 1</div>
+                        <div class="liveops-cta-sample-body"></div>
+                    </div>
+                    <div class="liveops-cta-sample" data-index="1">
+                        <div class="liveops-cta-sample-title">Sample 2</div>
+                        <div class="liveops-cta-sample-body"></div>
+                    </div>
+                    <div class="liveops-cta-sample" data-index="2">
+                        <div class="liveops-cta-sample-title">Sample 3</div>
+                        <div class="liveops-cta-sample-body"></div>
+                    </div>
+                    <div class="liveops-cta-sample" data-index="3">
+                        <div class="liveops-cta-sample-title">Sample 4</div>
+                        <div class="liveops-cta-sample-body"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <section class="liveops-schedule-panel">
+            <h2 class="liveops-panel-title">Schedule launch (CST)</h2>
+            <div class="liveops-schedule-grid">
+                <div class="liveops-schedule-field">
+                    <div class="liveops-label">Start time (CST)</div>
+                    <input id="liveopsStart" type="datetime-local" class="liveops-input">
+                </div>
+                <div class="liveops-schedule-field">
+                    <div class="liveops-label">End time (CST)</div>
+                    <input id="liveopsEnd" type="datetime-local" class="liveops-input">
+                </div>
+                <div class="liveops-schedule-field">
+                    <div class="liveops-label">Environment</div>
+                    <div class="liveops-env-toggle">
+                        <label class="liveops-env-chip">
+                            <input type="radio" name="liveopsEnv" value="prodqa" checked>
+                            <span>Prod QA</span>
+                        </label>
+                        <label class="liveops-env-chip">
+                            <input type="radio" name="liveopsEnv" value="endusers">
+                            <span>End users (auto launch)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button id="liveopsScheduleBtn" type="button" class="liveops-schedule-btn">Add to active launches</button>
+            <div class="liveops-meta">This schedule is for demo only and uses browser time, labeled as CST for planning.</div>
+        </section>
+
+        <section class="liveops-launches-panel" style="margin-top:14px;">
+            <div class="liveops-panel-header">
+                <h2 class="liveops-panel-title">Launch grid</h2>
+                <div class="liveops-launch-sort">
+                    <span class="liveops-launch-sub">Sort by</span>
+                    <select id="liveopsSort">
+                        <option value="type">Promotion / type</option>
+                        <option value="theme">Theme</option>
+                        <option value="time-asc">Start date / time</option>
+                        <option value="status">Active vs archived</option>
+                    </select>
+                </div>
+            </div>
+            <div id="liveopsLaunchesList" class="liveops-launches-list">No launches scheduled yet.</div>
+        </section>
+
+        <footer class="liveops-footer-row" style="margin-top:18px;">
+            <a class="liveops-back-link" href="liveops-login.html">Log out / back to login</a>
+        </footer>
+    </div>
+</body>
+</html>
