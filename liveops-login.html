@@ -185,6 +185,270 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        .liveops-ai-bot {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+        .liveops-ai-chat {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            width: 380px;
+            max-width: calc(100vw - 60px);
+            height: 500px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideInUp 0.3s ease;
+            border: 2px solid #0066cc;
+        }
+        .liveops-ai-chat.active {
+            display: flex;
+        }
+        .liveops-ai-header {
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 18px 18px 0 0;
+        }
+        .liveops-ai-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .liveops-ai-info {
+            flex: 1;
+        }
+        .liveops-ai-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .liveops-ai-info p {
+            margin: 2px 0 0;
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        .liveops-ai-close {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .liveops-ai-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .liveops-ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8f9fa;
+        }
+        .liveops-ai-message {
+            display: flex;
+            gap: 8px;
+            animation: messageSlideIn 0.3s ease;
+        }
+        .liveops-ai-message.user {
+            flex-direction: row-reverse;
+        }
+        .liveops-ai-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .liveops-ai-message.user .liveops-ai-message-avatar {
+            background: linear-gradient(135deg, #6b4a86, #8e6aaa);
+        }
+        .liveops-ai-message-bubble {
+            background: white;
+            border-radius: 16px;
+            padding: 10px 14px;
+            max-width: 70%;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .liveops-ai-message.user .liveops-ai-message-bubble {
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            color: white;
+        }
+        .liveops-ai-typing {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 16px;
+            width: fit-content;
+        }
+        .liveops-ai-typing.active {
+            display: flex;
+        }
+        .liveops-ai-typing span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0066cc;
+            animation: typingDot 1.4s infinite;
+        }
+        .liveops-ai-typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .liveops-ai-typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        .liveops-ai-input-area {
+            padding: 12px 16px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .liveops-ai-input {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .liveops-ai-input:focus {
+            border-color: #0066cc;
+        }
+        .liveops-ai-action-btn {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .liveops-ai-action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,102,204,0.4);
+        }
+        .liveops-ai-action-btn.listening {
+            background: linear-gradient(135deg, #ff0066, #ff3388);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .liveops-ai-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0088ff);
+            border: none;
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .liveops-ai-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,102,204,0.5);
+        }
+        .liveops-ai-toggle .liveops-ai-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            background: #ff0066;
+            border-radius: 50%;
+            color: white;
+            font-size: 0.7rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+        .liveops-ai-toggle .liveops-ai-badge.active {
+            display: flex;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 8px 30px rgba(0,102,204,0.6);
+            }
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -234,10 +498,340 @@
                     window.location.href = 'liveops-dashboard.html?user=' + encodeURIComponent(username);
                 }
             });
+
+            // AI Chatbot for Login Page
+            const aiToggle = document.getElementById('liveopsAIToggle');
+            const aiChat = document.getElementById('liveopsAIChat');
+            const aiClose = document.getElementById('liveopsAIClose');
+            const aiMessages = document.getElementById('liveopsAIMessages');
+            const aiInput = document.getElementById('liveopsAIInput');
+            const aiSendBtn = document.getElementById('liveopsAISend');
+            const aiVoiceBtn = document.getElementById('liveopsAIVoice');
+            const aiTyping = document.getElementById('liveopsAITyping');
+            const aiBadge = document.getElementById('liveopsAIBadge');
+            let unreadCount = 0;
+            let lastActivityTime = Date.now();
+            let hasAskedIdleQuestion = false;
+            let isPageVisible = true;
+            let recognition = null;
+
+            // Load voices for speech synthesis
+            const synthesis = window.speechSynthesis;
+            if (synthesis) {
+                synthesis.addEventListener('voiceschanged', function() {
+                    const voices = synthesis.getVoices();
+                    console.log('Available voices:', voices.map(v => v.name));
+                });
+                // Trigger voice loading
+                synthesis.getVoices();
+            }
+
+            // Track page visibility - only speak when page is active
+            document.addEventListener('visibilitychange', function() {
+                isPageVisible = !document.hidden;
+                if (!isPageVisible) {
+                    // Stop speaking when user switches tabs
+                    if (synthesis) synthesis.cancel();
+                }
+            });
+            
+            // Initialize Speech Recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    aiVoiceBtn.classList.add('listening');
+                    aiVoiceBtn.innerHTML = '🎤';
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    console.log('Voice command:', transcript);
+                    addMessage(transcript, 'user');
+                    processLoginCommand(transcript);
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    aiVoiceBtn.classList.remove('listening');
+                    aiVoiceBtn.innerHTML = '🎙️';
+                };
+
+                recognition.onend = function() {
+                    aiVoiceBtn.classList.remove('listening');
+                    aiVoiceBtn.innerHTML = '🎙️';
+                };
+            }
+
+            aiToggle.addEventListener('click', function() {
+                aiChat.classList.toggle('active');
+                if (aiChat.classList.contains('active')) {
+                    unreadCount = 0;
+                    aiBadge.classList.remove('active');
+                    aiInput.focus();
+                }
+            });
+
+            aiClose.addEventListener('click', function() {
+                aiChat.classList.remove('active');
+            });
+
+            aiSendBtn.addEventListener('click', sendMessage);
+            aiInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // Voice input button
+            if (aiVoiceBtn) {
+                aiVoiceBtn.addEventListener('click', function() {
+                    if (!recognition) {
+                        addMessage('Voice recognition is not supported in your browser. Try Chrome or Edge.', 'bot');
+                        return;
+                    }
+                    
+                    if (aiVoiceBtn.classList.contains('listening')) {
+                        recognition.stop();
+                    } else {
+                        recognition.start();
+                    }
+                });
+            }
+            
+            aiInput.addEventListener('input', resetIdleTimer);
+            document.addEventListener('click', resetIdleTimer);
+            document.addEventListener('keypress', resetIdleTimer);
+
+            function sendMessage() {
+                const message = aiInput.value.trim();
+                if (!message) return;
+                addMessage(message, 'user');
+                aiInput.value = '';
+                processLoginCommand(message);
+            }
+
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'liveops-ai-message' + (sender === 'user' ? ' user' : '');
+                const avatar = document.createElement('div');
+                avatar.className = 'liveops-ai-message-avatar';
+                avatar.textContent = sender === 'user' ? '👤' : '🌹';
+                const bubble = document.createElement('div');
+                bubble.className = 'liveops-ai-message-bubble';
+                bubble.textContent = text;
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(bubble);
+                aiMessages.appendChild(messageDiv);
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+                if (sender === 'bot' && !aiChat.classList.contains('active')) {
+                    unreadCount++;
+                    aiBadge.textContent = unreadCount;
+                    aiBadge.classList.add('active');
+                }
+            }
+
+            function showTyping() {
+                aiTyping.classList.add('active');
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+            }
+
+            function hideTyping() {
+                aiTyping.classList.remove('active');
+            }
+
+            function speak(text) {
+                // Only speak if page is visible/active
+                if (!isPageVisible) {
+                    console.log('Page not visible, skipping speech');
+                    return;
+                }
+                
+                const synthesis = window.speechSynthesis;
+                if (synthesis) {
+                    synthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.1;
+                    utterance.volume = 1.0;
+                    
+                    // Select a female voice (Rose)
+                    const voices = synthesis.getVoices();
+                    const femaleVoice = voices.find(voice => 
+                        voice.name.includes('Female') || 
+                        voice.name.includes('Samantha') || 
+                        voice.name.includes('Victoria') ||
+                        voice.name.includes('Karen') ||
+                        voice.name.includes('Moira') ||
+                        voice.name.includes('Google US English Female') ||
+                        voice.name.includes('Microsoft Zira') ||
+                        (voice.name.includes('en') && voice.name.toLowerCase().includes('female'))
+                    );
+                    
+                    if (femaleVoice) {
+                        utterance.voice = femaleVoice;
+                        console.log('Rose speaking with voice:', femaleVoice.name);
+                    }
+                    
+                    // Auto-restart listening after speaking if in login workflow
+                    utterance.onend = function() {
+                        if ((loginContext.waitingFor || autoListenAfterResponse) && isPageVisible && recognition) {
+                            setTimeout(function() {
+                                try {
+                                    recognition.start();
+                                    console.log('Auto-restarted listening for login');
+                                } catch(e) {
+                                    console.log('Already listening or error:', e);
+                                }
+                            }, 1000);
+                        }
+                    };
+                    
+                    synthesis.speak(utterance);
+                }
+            }
+
+            let loginContext = {
+                waitingFor: null,
+                username: '',
+                password: ''
+            };
+            let autoListenAfterResponse = false;
+
+            function processLoginCommand(command) {
+                showTyping();
+                setTimeout(function() {
+                    hideTyping();
+                    const cmd = command.toLowerCase();
+                    let response = '';
+                    
+                    // Handle login workflow
+                    if (loginContext.waitingFor === 'username') {
+                        loginContext.username = command.trim();
+                        loginContext.waitingFor = 'password';
+                        response = '✅ Got it! Username is "' + command.trim() + '". Now, what\'s your password?';
+                        addMessage(response, 'bot');
+                        if (isPageVisible) speak(response);
+                        return;
+                    } else if (loginContext.waitingFor === 'password') {
+                        loginContext.password = command.trim();
+                        loginContext.waitingFor = null;
+                        autoListenAfterResponse = false; // Stop auto-listening after login complete
+                        
+                        // Fill in the form
+                        const userInput = document.getElementById('liveopsUsername');
+                        const passInput = document.getElementById('liveopsPassword');
+                        const loginBtn = document.querySelector('.liveops-btn-primary');
+                        
+                        if (userInput && passInput) {
+                            userInput.value = loginContext.username;
+                            passInput.value = loginContext.password;
+                            response = '✅ Perfect! I\'ve entered your credentials. Logging you in now...';
+                            addMessage(response, 'bot');
+                            if (isPageVisible) speak(response);
+                            
+                            // Auto-submit after a moment
+                            setTimeout(function() {
+                                if (loginBtn) loginBtn.click();
+                            }, 2000);
+                        }
+                        return;
+                    }
+                    
+                    // Start login workflow
+                    if (cmd.includes('login') || cmd.includes('log in') || cmd.includes('sign in')) {
+                        loginContext.waitingFor = 'username';
+                        loginContext.username = '';
+                        loginContext.password = '';
+                        autoListenAfterResponse = true; // Enable continuous listening for login
+                        response = '🔐 I\'ll help you log in! First, what\'s your username?';
+                    } else if (cmd.includes('help') || cmd.includes('stuck') || cmd.includes('how')) {
+                        response = '🔐 Just say "login" and I\'ll ask you for your credentials step by step!';
+                    } else if (cmd.includes('hello') || cmd.includes('hi')) {
+                        response = '👋 Hello! I\'m Rose, your login assistant. Say "login" and I\'ll help you get in!';
+                    } else {
+                        response = '🤖 I\'m Rose, your login assistant! Say "login" to get started.';
+                    }
+                    addMessage(response, 'bot');
+                    if (isPageVisible) {
+                        speak(response);
+                    }
+                }, 1000);
+            }
+
+            function resetIdleTimer() {
+                lastActivityTime = Date.now();
+                hasAskedIdleQuestion = false;
+            }
+
+            function checkIdleAndAsk() {
+                const idleTime = Date.now() - lastActivityTime;
+                if (idleTime >= 30000 && !hasAskedIdleQuestion) {
+                    hasAskedIdleQuestion = true;
+                    const questions = [
+                        '🤔 Having trouble logging in? Just say "login" and I\'ll help you step by step!',
+                        '💭 Still on the login page? Say "login" and I\'ll ask for your credentials.',
+                        '👋 Need help? Say "login" and I\'ll guide you through it!',
+                        '🔍 Stuck? Just say "login" and tell me your username and password.',
+                        '💡 Quick tip: Say "login" to start the login process with me!'
+                    ];
+                    const question = questions[Math.floor(Math.random() * questions.length)];
+                    addMessage(question, 'bot');
+                    if (isPageVisible) {
+                        speak(question);
+                    }
+                }
+            }
+
+            setInterval(checkIdleAndAsk, 30000);
+
+            setTimeout(function() {
+                const welcomeMsg = '👋 Welcome! I\'m Rose, your login assistant. Say "login" and I\'ll help you sign in by asking for your credentials!';
+                addMessage(welcomeMsg, 'bot');
+                if (isPageVisible) {
+                    speak(welcomeMsg);
+                }
+                if (!aiChat.classList.contains('active')) {
+                    unreadCount = 1;
+                    aiBadge.textContent = '1';
+                    aiBadge.classList.add('active');
+                }
+            }, 2000);
+
         });
     </script>
 </head>
 <body class="liveops-body">
+    <div class="liveops-ai-bot">
+        <div id="liveopsAIChat" class="liveops-ai-chat">
+            <div class="liveops-ai-header">
+                <div class="liveops-ai-avatar">🌹</div>
+                <div class="liveops-ai-info">
+                    <h3>Rose - Login Assistant</h3>
+                    <p>Online • Here to help</p>
+                </div>
+                <button id="liveopsAIClose" class="liveops-ai-close">×</button>
+            </div>
+            <div id="liveopsAIMessages" class="liveops-ai-messages">
+                <div id="liveopsAITyping" class="liveops-ai-typing">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="liveops-ai-input-area">
+                <input id="liveopsAIInput" class="liveops-ai-input" type="text" placeholder="Ask me anything...">
+                <button id="liveopsAIVoice" class="liveops-ai-action-btn" title="Voice Input">🎙️</button>
+                <button id="liveopsAISend" class="liveops-ai-action-btn" title="Send Message">➤</button>
+            </div>
+        </div>
+        <button id="liveopsAIToggle" class="liveops-ai-toggle" title="AI Assistant">
+            💬
+            <span id="liveopsAIBadge" class="liveops-ai-badge"></span>
+        </button>
+    </div>
     <div class="liveops-auth-card">
         <div class="liveops-auth-header">
             <div class="liveops-auth-logo">
